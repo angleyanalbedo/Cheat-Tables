@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="42">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>30</ID>
+      <Description>"Genshin Impact 2.6 NO DATA COLLECTOR version 2022-04-05"</Description>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+      <Color>FF0080</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+if getCEVersion() &lt; 7.3 then
+showMessage('Cheat Engine 7.3 Required')
+error('Cheat Engine 7.3 needed')
+end
+if syntaxcheck then return end
+if process and readInteger(process) ~= 0 then
+--    mono_initialize()
+--    LaunchMonoDataCollector()
+else
+    local msg = 'No process detected.'
+    print(msg)
+    error(msg)
+end
+{$asm}
+LuaCall(function cycleFullCompact(sender,force) local state = not(compactmenuitem.Caption == 'Compact View Mode'); if force~=nil then state = not force end; compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'; getMainForm().Splitter1.Visible = state; getMainForm().Panel4.Visible    = state; getMainForm().Panel5.Visible    = state; end; function addCompactMenu() if compactmenualreadyexists then return end; local parent = getMainForm().Menu.Items; compactmenuitem = createMenuItem(parent); parent.add(compactmenuitem); compactmenuitem.Caption = 'Compact View Mode'; compactmenuitem.OnClick = cycleFullCompact; compactmenualreadyexists = 'yes'; end; addCompactMenu(); cycleFullCompact(nil,true))
+[DISABLE]
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>46</ID>
+          <Description>"--- Script Info: Red=High Risk | Orange=Medium Risk | Green=Less Risk ---"</Description>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>352532</ID>
+          <Description>"Low Risk"</Description>
+          <Color>FF0000</Color>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>8</ID>
+              <Description>"God Mode"</Description>
+              <Color>009700</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aogodmode,UserAssembly.dll,48 8B 02 48 8D 4C 24 30 48 8B)
+alloc(ngodmode,$1000,aogodmode)
+alloc(aophp,$8)
+label(rgodmode)
+label(resgodmode)
+ngodmode:
+mov [aophp],rdx
+resgodmode:
+readmem(aogodmode,8)
+jmp rgodmode
+aogodmode:
+jmp ngodmode
+nop 3
+rgodmode:
+registersymbol(aogodmode resgodmode aophp)
+aobscanmodule(aopinvis,UserAssembly.dll,C3 B0 01 48 8B 7C 24 30 48 8B 5C 24 38 48 83 C4 20 5E C3 32)
+alloc(npinvis,$1000,aopinvis)
+label(rpinvis)
+label(respinvis)
+npinvis:
+cmp [aophp],rbx
+mov al,01
+jne @f
+xor al,al
+mov rdi,[rsp+30]
+mov rbx,[rsp+38]
+jmp rpinvis
+respinvis:
+readmem(aopinvis+01,7)
+jmp rpinvis
+aopinvis+01:
+jmp npinvis
+nop 2
+rpinvis:
+registersymbol(aopinvis respinvis)
+[DISABLE]
+aogodmode:
+readmem(resgodmode,8)
+aopinvis+01:
+readmem(respinvis,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>47</ID>
+              <Description>"Dumb Enemy"</Description>
+              <Color>009700</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+
+   Author            : iamnotgirl
+                       2022-04-01 AOB fix
+
+}
+
+[ENABLE]
+//aobscanmodule(aoinvicibility,UserAssembly.dll,74 66 48 8B 8B 18 01 00 00)
+aobscanmodule(aoinvicibility,UserAssembly.dll,74 37 48 8B 8B 28010000)
+alloc(resinvicibility,8)
+resinvicibility:
+readmem(aoinvicibility,1)
+aoinvicibility:
+db 75
+registersymbol(aoinvicibility resinvicibility)
+[DISABLE]
+aoinvicibility:
+readmem(resinvicibility,1)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>6</ID>
+              <Description>"Chest Esp"</Description>
+              <Color>009700</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aochestvis,UserAssembly.dll,75 39 40 84 ED 74)
+alloc(reschestvis,8)
+reschestvis:
+readmem(aochestvis,6)
+aochestvis:
+db 74 39 40 84 ED 75
+registersymbol(aochestvis reschestvis)
+aobscanmodule(aochestvis2,UserAssembly.dll,75 11 33 D2 48 8B CF E8 ?? ?? ?? ?? C6 87 ?? 00 00 00 01)
+alloc(reschestvis2,8)
+reschestvis2:
+readmem(aochestvis2,7)
+aochestvis2:
+db 74 11
+registersymbol(aochestvis2 reschestvis2)
+aobscanmodule(aochestdis,UserAssembly.dll,74 DD 33 D2 48 8B CF)
+alloc(reschestdis,8)
+reschestdis:
+readmem(aochestdis,7)
+aochestdis:
+db 77 DD
+registersymbol(aochestdis reschestdis)
+[DISABLE]
+aochestvis:
+readmem(reschestvis,6)
+aochestvis2:
+readmem(reschestvis2,7)
+aochestdis:
+readmem(reschestdis,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>11</ID>
+              <Description>"Monster Esp"</Description>
+              <Color>009700</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aomobesp,UserAssembly.dll,76 07 C6 83 E1 00 00 00 01)
+alloc(resmobesp,8)
+resmobesp:
+readmem(aomobesp,1)
+aomobesp:
+db 74
+registersymbol(aomobesp resmobesp)
+aobscanmodule(aomoblvl,UserAssembly.dll,0F 87 E1 00 00 00 48 8B)
+alloc(resmoblvl,8)
+resmoblvl:
+readmem(aomoblvl,2)
+aomoblvl:
+db 0F 84
+registersymbol(aomoblvl resmoblvl)
+[DISABLE]
+aomobesp:
+readmem(resmobesp,1)
+aomoblvl:
+readmem(resmoblvl,2)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"Elemental Sight"</Description>
+              <Color>009700</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aoElementalSight,UserAssembly.dll,80 7B ? ? 0F 57 F6)
+alloc(resElementalSight,8)
+resElementalSight:
+readmem(aoElementalSight,7)
+aoElementalSight:
+db 80 7B 50 01 0F 57 F6
+registersymbol(aoElementalSight resElementalSight)
+[DISABLE]
+aoElementalSight:
+readmem(resElementalSight,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>221</ID>
+              <Description>"FPS Unlock"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 1.0
+  Date   : 2022-04-02
+  Author : SinGul4ritY
+
+  This script does blah blah blah
+  
+  Based on original script by AlvinC (2022-01-08)
+}
+
+[ENABLE]
+
+aobscanmodule(fpshook,UnityPlayer.dll+92B753,8bxxxxxxxxxx66xxxxxx0f5bxxeb)
+alloc(newmem,64,fpshook)
+alloc(orgcode,6,fpshook)
+
+label(return)
+label(MaxFps)
+
+registersymbol(MaxFps)
+registersymbol(fpshook)
+registersymbol(orgcode)
+
+orgcode:
+	readmem(fpshook, 6)
+
+newmem:
+    mov eax, DWORD PTR [MaxFps]
+	jmp return
+
+MaxFps:
+    dw  #240
+
+fpshook:
+	jmp newmem
+	nop
+
+return:
+
+
+[DISABLE]
+
+fpshook:
+	readmem(orgcode, 6)
+
+unregistersymbol(*)
+dealloc(*)
+
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>222</ID>
+                  <Description>"Max FPS"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>MaxFps</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>211</ID>
+              <Description>"Unlimited Stamina"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aostamina,UserAssembly.dll,0F 11 04 C1 FF 43 50 48 81 C4 98 00 00 00 41 5E 5E 5D 5B C3 E8 8B BF)
+alloc(nstamina,$1000,aostamina)
+label(rstamina)
+label(resstamina)
+nstamina:
+cmp rdi,271A
+jne @f
+movups xmm0,[rcx+rax*8]
+jmp resstamina
+@@:
+cmp rdi,271B
+jne @f
+movups xmm0,[rcx+rax*8]
+jmp resstamina
+@@:
+cmp rdi,271C
+jne @f
+movups xmm0,[rcx+rax*8]
+@@:
+resstamina:
+readmem(aostamina,7)
+jmp rstamina
+aostamina:
+jmp nstamina
+nop 2
+rstamina:
+registersymbol(aostamina resstamina)
+[DISABLE]
+aostamina:
+readmem(resstamina,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>352533</ID>
+          <Description>"Medium Risk"</Description>
+          <Color>FF0000</Color>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"Attack Speed"</Description>
+              <Color>0080FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aodoubleatk,UnityPlayer.dll,8B 47 ? 89 47 ? 8B 47 ? 89 47 ? 8B 47 ? 89 47 ? 66 C7 47)
+alloc(resdoubleatk,8)
+resdoubleatk:
+readmem(aodoubleatk,6)
+aodoubleatk:
+db 10 47 30 89 47 2C
+registersymbol(aodoubleatk resdoubleatk)
+[DISABLE]
+aodoubleatk:
+readmem(resdoubleatk,6)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>7</ID>
+              <Description>"Fly Hack"</Description>
+              <Color>0080FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-05
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aoflymode,UserAssembly.dll,83 78 24 00 0F 94 C0)
+alloc(resflymode,8)
+resflymode:
+readmem(aoflymode,4)
+aoflymode:
+db 83 78 24 01
+registersymbol(aoflymode resflymode)
+aobscanmodule(aoforcefly,UserAssembly.dll,0F 95 C0 88 87 E4 01 00 00)
+alloc(resforcefly,8)
+resforcefly:
+readmem(aoforcefly,2)
+aoforcefly:
+db 0F 9D
+registersymbol(aoforcefly resforcefly)
+[DISABLE]
+aoflymode:
+readmem(resflymode,4)
+aoforcefly:
+readmem(resforcefly,2)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>0</ID>
+              <Description>"No Skill and Burst Cooldown"</Description>
+              <Color>0080FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+
+   Author            : SinGul4ritY
+                       2022-03-30 - Fixed SKILL and Burst Cooldown
+                                  - added visual enabling of Burst
+
+
+}
+
+[ENABLE]
+//aobscanmodule(skillx,UserAssembly.dll,0F 11 ? ? C3 CC CC CC CC CC CC CC CC 40 ? 48 81 EC) // should be unique
+aobscanmodule(skillx,UserAssembly.dll+7EF5BC3,0f11xxxxxxxxxxxxxxxxxxxxxx40xx48xxxxxx80xxxxxxxxxxxx48xxxx75xx8bxxxxxxxxxxe8xxxxxxxxc6xxxxxxxxxxxx48xxxxxxxxxxxxf6xxxxxxxxxxxx74xx83xxxxxxxxxxxx75xx48xxxxe8xxxxxxxx48xxxxxxxxxxxx48xxxxxxxxxxxx48xxxx48xxxx0f84xxxxxxxx8bxxxx3dxxxxxxxx7exx0f86xxxxxxxx80xxxxxxxxxxxx74xx45xxxxbaxxxxxxxx33xxe8xxxxxxxx84xx74xx45xxxxbaxxxxxxxx33xxe8xxxxxxxx48xxxx0f84xxxxxxxx45xxxx48xxxx48xxxx48xxxxxxxxe9xxxxxxxx48xxxxxxxx48)
+alloc(r_skillx,4,skillx)
+r_skillx:
+readmem(skillx,4)
+skillx:
+db 90 90 90 90
+registersymbol(skillx)
+registersymbol(r_skillx)
+//aobscanmodule(skillxx,UserAssembly.dll,0F 10 ? ? F6 81 0A 01 00 00 ? 74 ? 83 B9 BC 00 00 00 ? 75 ? E8 ? ? ? ? 45 33 ? 66 0F ? ? ? ? 48 8D ? ? ? 33 C9 E8 ? ? ? ? 33 D2 48 8B ? 0F 28 ? E8 ? ? ? ? 48 85 ? 74) // should be unique
+aobscanmodule(skillxx,UserAssembly.dll+2548976,0f10xxxxf6xxxxxxxxxxxx74xx83xxxxxxxxxxxx75xxe8xxxxxxxx45xxxx66xxxxxxxxxx48xxxxxxxx33xxe8xxxxxxxx33xx48xxxx0f28xxe8xxxxxxxx48xxxx74xx0f10xxxx45xxxx48xxxxxxxx33xx0f29xxxxxxe8xxxxxxxx33)
+alloc(r_skillxx,4,skillxx)
+r_skillxx:
+readmem(skillxx,4)
+skillxx:
+db 90 90 90 90
+registersymbol(skillxx)
+registersymbol(r_skillxx)
+
+//SinGul4ritY added visual enabling
+aobscanmodule(skillxxx,UserAssembly.dll+254F4C7,0f10xxxxf6xxxxxxxxxxxx74xx83xxxxxxxxxxxx75xxe8xxxxxxxx45xxxx66xxxxxxxxxx48xxxxxxxx33xxe8xxxxxxxx33xx48xxxx0f28xxe8xxxxxxxx48xxxx74xx0f10xxxx45xxxx48xxxxxxxx33xx0f29xxxxxxe8xxxxxxxxf3)
+alloc(r_skillxxx,4,skillxx)
+r_skillxxx:
+readmem(skillxxx,4)
+skillxxx:
+db 90 90 90 90
+registersymbol(skillxxx)
+registersymbol(r_skillxxx)
+
+[DISABLE]
+skillx:
+readmem(r_skillx,4)
+unregistersymbol(skillx)
+unregistersymbol(r_skillx)
+dealloc(r_skillx)
+skillxx:
+readmem(r_skillxx,4)
+unregistersymbol(skillxx)
+unregistersymbol(r_skillxx)
+dealloc(r_skillxx)
+
+skillxxx:
+readmem(r_skillxxx,4)
+unregistersymbol(skillxxx)
+unregistersymbol(r_skillxxx)
+dealloc(r_skillxxx)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>168</ID>
+                  <Description>"** Enable when there are NO cooldowns for both"</Description>
+                  <Color>4080FF</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>352534</ID>
+          <Description>"High Risk"</Description>
+          <Color>FF0000</Color>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>352641</ID>
+              <Description>"Damage Hacks (for certain charta only)"</Description>
+              <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>352628</ID>
+                  <Description>"&lt;&lt;&lt;Click for Information"</Description>
+                  <Color>FF0080</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[enable]
+{$LUA}
+getMainForm().CommentButton.doClick()
+{$ASM}
+[disable]
+
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>352634</ID>
+                  <Description>"&lt;&lt;&lt;Click for EXTENDED Information by FAII"</Description>
+                  <Color>FF0080</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[enable]
+{$LUA}
+ShellExecute("https://fearlessrevolution.com/viewtopic.php?p=244263#p244263")
+{$ASM}
+nop
+[disable]
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>352635</ID>
+                  <Description>"&lt;&lt;&lt;Click for EXTENDED Information by Sparky9020"</Description>
+                  <Color>FF0080</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[enable]
+{$LUA}
+ShellExecute("https://fearlessrevolution.com/viewtopic.php?p=244347&amp;sid=7c892e56b7f51ec4708a67fdf5d26bbd#p244347")
+{$ASM}
+nop
+[disable]
+
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>352627</ID>
+                  <Description>"Attack Multiplier"</Description>
+                  <Options moDeactivateChildrenAsWell="1"/>
+                  <Color>0000FF</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+
+   Author            : SinGul4ritY
+                       2022-04-03 - Fix for Damage Hack (for certain chara only) -&gt; Stats ( based on AlvinC one 2022-02-18 )
+                                  - more robust AOB for aodmgmul
+                       2022-04-02 - fixed AOB: aodmgmul, note iamnotgirl came with the same AOB i think
+                       2022-03-31 - fixed AOB: aodmgmul
+
+                       Toga
+                       2022-04-05 - seperated the 2 hacks
+}
+
+[ENABLE]
+{aobscanmodule(aostats,UserAssembly.dll,F3 0F ? ? ? F3 0F ? ? 48 8B ? ? ? ? ? ? F3 0F)
+alloc(nstats,$1000,aostats)
+alloc(set_stats,$4)
+label(rstats)
+label(resstats)
+set_stats:
+dd (float)50
+nstats:
+movss xmm0,[set_stats]
+resstats:
+readmem(aostats,5)
+jmp rstats
+aostats:
+jmp nstats
+rstats:
+registersymbol(aostats resstats set_stats)
+}
+//aobscanmodule(aodmgmul,UserAssembly.dll,06 F3 0F ? ? 48 83 C4 ? 5B C3 49 8B ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC 48 89)
+aobscanmodule(aodmgmul,UserAssembly.dll+37E891E,f3xxxxxx48xxxxxxxxxx49xxxxe8xxxxxxxxxxe8xxxxxxxxxxxxxxxxxxxxxxxxxxxx40xx48xxxxxx80xxxxxxxxxxxx48xxxx75xx8bxxxxxxxxxxe8xxxxxxxxc6xxxxxxxxxxxx45)
+
+alloc(ndmgmul,$1000,aodmgmul)
+alloc(set_damage,$32)
+label(rdmgmul)
+label(resdmgmul)
+set_damage:
+dd (float)10
+ndmgmul:
+movss xmm0,[rax]
+add rsp,20
+cmp [rax],(float)4
+je @f
+cmp [rax],(float)3
+je @f
+cmp [rax],(float)-1
+je @f
+movss xmm0,[set_damage]
+resdmgmul:
+jmp rdmgmul
+
+dbg_rax:
+  dd (float)0
+
+aodmgmul:
+jmp ndmgmul
+nop 3
+rdmgmul:
+registersymbol(aodmgmul resdmgmul set_damage)
+
+[DISABLE]
+
+aodmgmul:
+db F3 0F 10 00 48 83 C4 20
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>352630</ID>
+                      <Description>"Multiplier"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <Color>0000FF</Color>
+                      <VariableType>Float</VariableType>
+                      <Address>set_damage</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>352636</ID>
+                  <Description>"Stats Multiplier"</Description>
+                  <Options moDeactivateChildrenAsWell="1"/>
+                  <Color>0000FF</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+
+   Author            : SinGul4ritY
+                       2022-04-03 - Fix for Damage Hack (for certain chara only) -&gt; Stats ( based on AlvinC one 2022-02-18 )
+                                  - more robust AOB for aodmgmul
+                       2022-04-02 - fixed AOB: aodmgmul, note iamnotgirl came with the same AOB i think
+                       2022-03-31 - fixed AOB: aodmgmul
+
+                       Toga
+                       2022-04-05 - seperated the 2 hacks
+}
+
+[ENABLE]
+{aobscanmodule(aostats,UserAssembly.dll,F3 0F ? ? ? F3 0F ? ? 48 8B ? ? ? ? ? ? F3 0F)
+alloc(nstats,$1000,aostats)
+alloc(set_stats,$4)
+label(rstats)
+label(resstats)
+set_stats:
+dd (float)50
+nstats:
+movss xmm0,[set_stats]
+resstats:
+readmem(aostats,5)
+jmp rstats
+aostats:
+jmp nstats
+rstats:
+registersymbol(aostats resstats set_stats)
+}
+//SinGul4ritY
+aobscanmodule(hookStats,UserAssembly.dll+4DC5816,f3xxxxxxxxf3xxxxxx48xxxxxxxxxxxxxxf3xxxxxxf3xxxxxxxxf3xxxxxxf3xxxxxx48)
+alloc(newmem,64,hookStats)
+alloc(orgcode,5,hookStats)
+
+label(return)
+label(set_stats)
+
+registersymbol(hookStats)
+registersymbol(set_stats)
+registersymbol(orgcode)
+
+orgcode:
+    readmem(hookStats, 5)
+
+newmem:
+	movss xmm0,[set_stats]
+	jmp return
+
+set_stats:
+    dd (float)50
+
+hookStats:
+	jmp newmem
+
+return:
+
+[DISABLE]
+hookStats:
+	readmem(orgcode, 5)
+
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>352640</ID>
+                      <Description>"Multiplier"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <Color>0000FF</Color>
+                      <VariableType>Float</VariableType>
+                      <Address>set_stats</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2</ID>
+              <Description>"Movement Speed"</Description>
+              <Options moHideChildren="1"/>
+              <Color>0000FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-01-08
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aomovspeed,UnityPlayer.dll,42 89 44 02 38 B8)
+alloc(nmovspeed,$1000,aomovspeed)
+label(rmovspeed)
+label(resmovspeed)
+label(lmovspeed)
+nmovspeed:
+cmp rdx,108
+jne resmovspeed
+mov eax,[lmovspeed]
+resmovspeed:
+readmem(aomovspeed,5)
+jmp rmovspeed
+lmovspeed:
+dd (float)1
+aomovspeed:
+jmp nmovspeed
+rmovspeed:
+registersymbol(aomovspeed resmovspeed lmovspeed)
+[DISABLE]
+aomovspeed:
+readmem(resmovspeed,5)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>3</ID>
+                  <Description>"Movement (switch character to see the effect)"</Description>
+                  <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">1:Normal
+2:x2
+</DropDownList>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Float</VariableType>
+                  <Address>lmovspeed</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12</ID>
+              <Description>"Instant Bow Charge"</Description>
+              <Color>0000FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+
+   Author            : iamnotgirl
+                       2022-04-01 AOB fix
+
+}
+
+[ENABLE]
+//aobscanmodule(aobowinstant,UserAssembly.dll,0F 11 ? ? 48 85 ? 0F 84 ? ? ? ? 48 8B ? ? 4C 8D ? ? ? 0F 10)
+aobscanmodule(aobowinstant,UserAssembly.dll,0F 11 47 ? E8 ? ? ? ? 84 C0 75 4A )
+alloc(resbowinstant,8)
+resbowinstant:
+readmem(aobowinstant,4)
+aobowinstant:
+db 90 90 90 90
+registersymbol(aobowinstant resbowinstant)
+[DISABLE]
+aobowinstant:
+readmem(resbowinstant,4)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>39</ID>
+              <Description>"Pick Up Range (default 40m)"</Description>
+              <Color>0000FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2021-12-01
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobscanmodule(aopickrange,UserAssembly.dll,18 F3 0F 5C 4F 08)
+alloc(npickrange,$1000,aopickrange)
+alloc(set_range,$100)
+registersymbol(set_range)
+label(rpickrange)
+label(respickrange)
+set_range:
+dd (float)40
+npickrange:
+movss xmm0,[set_range]
+respickrange:
+readmem(aopickrange+01,5)
+jmp rpickrange
+aopickrange+01:
+jmp npickrange
+rpickrange:
+registersymbol(aopickrange respickrange)
+[DISABLE]
+aopickrange+01:
+readmem(respickrange,5)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>212</ID>
+                  <Description>"Range USE and EDIT at OWN RISK"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <Color>0000FF</Color>
+                  <VariableType>Float</VariableType>
+                  <Address>set_range</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352621</ID>
+      <Description>"-------------------------------------------------------------------------"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>223</ID>
+      <Description>"Original Author: AlvinC"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>229</ID>
+      <Description>"                                                                                                                       "</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352622</ID>
+      <Description>"All contributors in alphabetical order"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352632</ID>
+      <Description>"                                                                                                                       "</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352623</ID>
+      <Description>"Ciprianno, CrazyShoot, FAII, Frendly Chemist"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352624</ID>
+      <Description>"Galpt, iamnotgirl, Lynk, MGGA,, salem"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352631</ID>
+      <Description>"SinGul4ritY, Sparky9020, Su_, Toga"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352625</ID>
+      <Description>"--------------------------------------------------------------------------"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>352626</ID>
+      <Description>"( excuses if you should be listed but you're not )"</Description>
+      <Color>000000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>inject</Name>
+      <Address>25DB40D0000</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>genbypass</Name>
+      <Address>27916800000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+  <Comments>Big credit to galpt for the dmg scripts and its information.
+--- Recommended chara list to use "damage multiply" with ---
+• Raiden blade atk (requires her Q skill)
+• Diluc Q
+• Thoma normal &amp; charge atk (requires his Q skill)
+• Mona charge atk
+• Hutao charge atk (requires her E skill bloom)
+• Amber All Skill Set
+• Tabibito/Traveler hold E skill (Anemo)
+• Eula Q (wait until her floating blade blows up)
+• Eula Q + Lisa Q combined (elemental reaction)
+• Shenhe E skill (without holding)
+• Needs more tests...
+--- Recommended chara list to use "stats multiply" with ---
+• Characters with shield skill (Diona, Noelle, Thoma, etc.)
+• Characters with stats buff (Hu Tao, Bennett, etc.)
+• Characters with durational E/Q (Raiden, Hu Tao, etc.)
+• Needs more tests...
+</Comments>
+  <LuaScript>function attchProc(procName)
+  local cticks = 0
+  local maxticks = 500
+  local clockTime = 100
+  if not getProcessIDFromProcessName(procName) then
+     messageDialog("Required Process is unavailable!",mtError,mbOK)
+     error()
+  else while process ~= procName and cticks &lt;= maxticks do
+     openProcess(procName)
+     sleep(clockTime)
+     end
+  end
+end
+
+local procName = "GenshinImpact.exe"
+if process ~= procName then
+   rect = messageDialog('Attach Process?' ,mtConfirmation, mbYes, mbNo)
+   if rect == mrYes then
+      attchProc(procName)
+   elseif rect == mrNo then
+    end
+end
+</LuaScript>
+  <DisassemblerComments>
+    <DisassemblerComment>
+      <Address>"UserAssembly.dll"+1ED5AB7</Address>
+      <Comment>cooldown
+</Comment>
+    </DisassemblerComment>
+  </DisassemblerComments>
+</CheatTable>

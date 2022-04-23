@@ -1,0 +1,1161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>131</ID>
+      <Description>"Genshin Impact v1.1 (2020/11/14)"</Description>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+      <LastState Activated="1"/>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version:
+  Date   : 2020-10-22
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(speed,UnityPlayer.dll,F3 0F 10 81 0C 03 00 00 C3) // should be unique
+alloc(newmem,$1000,speed)
+
+label(code)
+label(return)
+
+alloc(Doublespeedv,12)
+
+newmem:
+
+code:
+  movss xmm0,[rcx+0000030C]
+  mov [Doublespeedv],rcx
+  jmp return
+
+speed:
+  jmp newmem
+  nop
+  nop
+  nop
+return:
+registersymbol(speed)
+registersymbol(Doublespeedv)
+
+aobscanmodule(doublespeed,UnityPlayer.dll,8B 87 0C 03 00 00 89 01 80) // should be unique
+alloc(newmem2,$1000,doublespeed)
+
+label(code2)
+label(return2)
+
+alloc(OnDoublespeed,2048)
+alloc(etcDoublespeed,2048)
+alloc(XDoublespeed,2048)
+
+alloc(MyDoublespeedv2,12)
+alloc(EtcDoublespeedv,12)
+alloc(XDoublespeedv,12)
+registersymbol(MyDoublespeedv2)
+registersymbol(EtcDoublespeedv)
+registersymbol(XDoublespeedv)
+
+newmem2:
+  cmp rdi,[Doublespeedv]
+  je OnDoublespeed
+  cmp byte ptr [rdi+328],01
+  je etcDoublespeed
+  mov eax,[EtcDoublespeedv]
+  jmp return2
+  etcDoublespeed:
+  cmp byte ptr [rdi+358],00
+  jne XDoublespeed
+  mov eax,[EtcDoublespeedv]
+  jmp return2
+  "UnityPlayer.dll"+1D71FC3:
+  xor edx,edx
+  XDoublespeed:
+  mov eax,[XDoublespeedv]
+  mov [rdi+0000030C],eax
+  jmp return2
+  OnDoublespeed:
+  mov eax,[MyDoublespeedv2]
+  mov [rdi+0000030C],eax
+  jmp return2
+
+code2:
+  mov eax,[rdi+0000030C]
+  jmp return2
+
+MyDoublespeedv2:
+  dd (float)1
+EtcDoublespeedv:
+  dd (float)1
+XDoublespeedv:
+  dd (float)1
+
+doublespeed:
+  jmp newmem2
+  nop
+return2:
+registersymbol(doublespeed)
+
+[DISABLE]
+
+speed:
+  db F3 0F 10 81 0C 03 00 00
+
+unregistersymbol(speed)
+dealloc(newmem)
+
+doublespeed:
+  db 8B 87 0C 03 00 00
+
+unregistersymbol(doublespeed)
+dealloc(newmem2)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>183</ID>
+          <Description>"Player Speedhack"</Description>
+          <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">1:OFF
+2:x2
+3:x3
+4:x4
+5:x5
+</DropDownList>
+          <VariableType>Float</VariableType>
+          <Address>MyDoublespeedv2</Address>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Set Value</Action>
+              <Keys>
+                <Key>112</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Set Value</Action>
+              <Keys>
+                <Key>113</Key>
+              </Keys>
+              <Value>0</Value>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>132</ID>
+          <Description>"Freeze Enemy/God Mode"</Description>
+          <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">1:OFF
+0:ON
+</DropDownList>
+          <Color>000000</Color>
+          <VariableType>Float</VariableType>
+          <Address>XDoublespeedv</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>182</ID>
+          <Description>"[E] Skill NoCooldown"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(nocd,UserAssembly.dll,0f 11 43 ? 0f 28 74 24 ? 48 8b 7c 24) // should be unique
+alloc(newmem,$1000,nocd)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  movaps xmm6,[rsp+50]
+  jmp return
+
+nocd:
+  jmp newmem
+  nop
+  nop
+  nop
+  nop
+return:
+registersymbol(nocd)
+
+[DISABLE]
+
+nocd:
+  db 0F 11 43 20 0F 28 74 24 50
+
+unregistersymbol(nocd)
+dealloc(newmem)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>175</ID>
+          <Description>"[Q] Skill NoCooldown"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(ultinocd,UserAssembly.dll,0F 10 70 ? F6 81 ? ? ? ? ? 74 ? 83 B9 ? ? ? ? ? 75 ? E8 ? ? ? ? 45 33 C0 66 0F 7F 74 24 ? 48 8D 54 24 ? 33 C9 E8 ? ? ? ? 33 D2 48 8B CB 0F 28 F0 E8 ? ? ? ? 48 85 C0 74 ? 0F 10 48) // should be unique
+alloc(newmem2,$1000,ultinocd)
+
+label(code2)
+label(return2)
+
+newmem2:
+
+code2:
+  test byte ptr [rcx+0000010A],01
+  jmp return2
+
+ultinocd:
+  jmp newmem2
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+return2:
+registersymbol(ultinocd)
+
+[DISABLE]
+
+ultinocd:
+  db 0F 10 70 30 F6 81 0A 01 00 00 01
+
+unregistersymbol(ultinocd)
+dealloc(newmem2)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>181</ID>
+          <Description>"Pick Range Hack"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(pickrange,UserAssembly.dll,f3 0f 11 73 ? 48 8b 5c 24 ? 0f 28 74 24 ? 48 83 c4 ? 5f c3 45 33 c0 ba ? ? ? ? 33 c9 e8 ? ? ? ? 48 85 c0 0f 84) // should be unique
+alloc(newmem,$1000,pickrange)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rbx+0C],(float)50
+  //movss [rbx+0C],xmm6
+  jmp return
+
+pickrange:
+  jmp newmem
+return:
+registersymbol(pickrange)
+
+[DISABLE]
+
+pickrange:
+  db F3 0F 11 73 0C
+
+unregistersymbol(pickrange)
+dealloc(newmem)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>123</ID>
+          <Description>"Infinite Stamina"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version:
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(stamina,UserAssembly.dll,e8 ? ? ? ? 4d 8b 16 49 8b 8a ? ? ? ? 48 89 4c 24 ? 45 8b cf 4c 8b c0 8b d7 49 8b ce 41 ff 92 ? ? ? ? e9 ? ? ? ? 48 03 d2 41 8b 44 d1 ? 48 83 c0 ? 48 c1 e0 ? 49 03 c3 e9) // should be unique
+alloc(newmem,$1000,stamina)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  call UserAssembly.dll+1E008C0
+  cmp rdi,271b
+  jne stamina+05
+  mov eax,(float)100
+  jmp stamina+05
+
+stamina:
+  jmp newmem
+return:
+registersymbol(stamina)
+
+[DISABLE]
+
+stamina:
+  db E8 E7 5A 77 00
+
+unregistersymbol(stamina)
+dealloc(newmem)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>143</ID>
+          <Description>"Zoom Hack"</Description>
+          <Options moHideChildren="1"/>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fov,UserAssembly.dll,58 01 00 00 F3 0F 58 83 38 01 00 00 F3 0F 59 83 54 01 00 00) // should be unique
+alloc(newmem,$1000,fov)
+
+label(code)
+label(return)
+
+alloc(ZoomValue,12)
+
+newmem:
+  mulss xmm0,[ZoomValue]
+
+code:
+  mulss xmm0,[rbx+00000154]
+  jmp return
+
+ZoomValue:
+  dd (float)1
+
+fov+0C:
+  jmp newmem
+  nop
+  nop
+  nop
+return:
+registersymbol(fov)
+registersymbol(ZoomValue)
+
+[DISABLE]
+
+fov+0C:
+  db F3 0F 59 83 54 01 00 00
+
+unregistersymbol(fov)
+unregistersymbol(ZoomValue)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>144</ID>
+              <Description>"FOV"</Description>
+              <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">1:Default
+2:x2
+3:x3
+4:x4
+5:x5
+</DropDownList>
+              <VariableType>Float</VariableType>
+              <Address>ZoomValue</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>165</ID>
+          <Description>"Rapid Fire/Attk"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(rapid,UserAssembly.dll,41 0f 11 07 44 88 67 ? 41) // should be unique
+alloc(newmem,$1000,rapid)
+
+label(code)
+label(return)
+
+newmem:
+  mov [r15],1
+  mov [rdi+7C],r12l
+  jmp return
+
+code:
+  movups [r15],xmm0
+  mov [rdi+7C],r12l
+  jmp return
+
+rapid:
+  jmp newmem
+  nop
+  nop
+  nop
+return:
+registersymbol(rapid)
+
+[DISABLE]
+
+rapid:
+  db 41 0F 11 07 44 88 67 7C
+
+unregistersymbol(rapid)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>176</ID>
+              <Description>"info: recommended to use this with "freeze enemy/god mode"."</Description>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>808040</Color>
+              <GroupHeader>1</GroupHeader>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>163</ID>
+          <Description>"Instant Bow Charge"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(bowcharges,UserAssembly.dll,0f 11 47 ? 48 85 c9 0f 84 ? ? ? ? 48 8b 46) // should be unique
+
+bowcharges:
+  db 90 90 90 90
+
+registersymbol(bowcharges)
+
+[DISABLE]
+
+bowcharges:
+  db 0F 11 47 10
+
+unregistersymbol(bowcharges)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>164</ID>
+              <Description>"info: go aiming mode, wait until the bow fully charged then enable this script."</Description>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>808040</Color>
+              <GroupHeader>1</GroupHeader>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>142</ID>
+          <Description>"[ESP] Box Treasure"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-14
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(boxesp,UserAssembly.dll,74 ? 48 85 f6 0f 84 ? ? ? ? 45 33 c0 8b d0) // should be unique
+aobscanmodule(boxespdist,UserAssembly.dll,74 E2 33 D2) // should be unique
+
+boxesp:
+  db 75 1C
+boxespdist:
+  db 75 E2
+
+registersymbol(boxesp)
+registersymbol(boxespdist)
+
+[DISABLE]
+
+boxesp:
+  db 74 1C
+boxespdist:
+  db 74 E2
+
+unregistersymbol(boxesp)
+unregistersymbol(boxespdist)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>127</ID>
+          <Description>"[ESP] Monster Level"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(lvesp,UserAssembly.dll,0f 87 ? ? ? ? 48 8b 8b ? ? ? ? c6 83) // should be unique
+
+lvesp:
+  db 0F 84 E1 00 00 00
+
+registersymbol(lvesp)
+
+[DISABLE]
+
+lvesp:
+  db 0F 87 E1 00 00 00
+
+unregistersymbol(lvesp)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>159</ID>
+          <Description>"[ESP] Monster Healthbar"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(hpesp,UserAssembly.dll,76 ? c6 83 ? ? ? ? ? 33 d2 48 8b cb e8 ? ? ? ? 0f 2f c6 0f 28 74 24 ? 0f 97 c0 88 83 ? ? ? ? eb) // should be unique
+
+hpesp:
+  db 74 07
+
+registersymbol(hpesp)
+
+[DISABLE]
+
+hpesp:
+  db 76 07
+
+unregistersymbol(hpesp)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>162</ID>
+          <Description>"Fly Hack (in Wing Mode)"</Description>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(gravity,UserAssembly.dll,83 78 24 00 0F 94 C0) // should be unique
+alloc(newmem,$1000,gravity)
+
+label(code)
+label(return)
+
+newmem:
+  cmp dword ptr [rax+24],01
+  jmp code
+
+code:
+  cmp dword ptr [rax+24],00
+  sete al
+  jmp return
+
+gravity:
+  jmp newmem
+  nop
+  nop
+return:
+registersymbol(gravity)
+
+/*----------------------------------------------------------------------------*/
+
+aobscanmodule(hover,UserAssembly.dll,0f b6 81 ? ? ? ? c3 cc cc cc cc cc cc cc cc 40 53 48 83 ec ? 80 3d ? ? ? ? ? 48 8b d9 75 ? 8b 0d ? ? ? ? e8 ? ? ? ? c6 05 ? ? ? ? ? 48 8b 05 ? ? ? ? 48 8b 90 ? ? ? ? 48 8b 8a) // should be unique
+alloc(newmem2,$1000,hover)
+
+label(code2)
+label(return2)
+
+newmem2:
+
+code2:
+  mov eax,01
+  jmp hover+7
+
+hover:
+  jmp newmem2
+  nop
+  nop
+return2:
+registersymbol(hover)
+
+[DISABLE]
+
+gravity:
+  db 83 78 24 00 0F 94 C0
+
+unregistersymbol(gravity)
+dealloc(newmem)
+
+/*--------------------*/
+
+hover:
+  db 0F B6 81 68 01 00 00
+
+unregistersymbol(hover)
+dealloc(newmem2)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>145</ID>
+          <Description>"Mobs Vac / Quest Teleport"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(playerbase,UserAssembly.dll,48 48 8B 15 ? ? ? ? 4D 85 C0 74 34 49 8B 00 0F B6 8A 04 01 00 00) // should be unique
+alloc(newmem,$1000,playerbase)
+
+label(code)
+label(return)
+
+alloc(GodModStack,12)
+registersymbol(GodModStack)
+alloc(GodModStack2,20)
+registersymbol(GodModStack2)
+
+newmem:
+  mov rax,[r8]
+  mov [GodModStack],r8
+  push rbx
+  mov rbx,r8
+  add rbx,170
+  mov rbx,[rbx]
+  mov [GodModStack2],rbx
+  mov rbx,r8
+  add rbx,178
+  mov rbx,[rbx]
+  mov [GodModStack2+8],rbx
+  pop rbx
+  movzx ecx,byte ptr [rdx+00000104]
+  Jmp playerbase+17
+
+code:
+  mov rax,[r8]
+  movzx ecx,byte ptr [rdx+00000104]
+  jmp return
+
+GodModStack:
+  dq 0
+
+playerbase+0D:
+  jmp newmem
+  nop
+  nop
+  nop
+  nop
+  nop
+return:
+registersymbol(playerbase)
+
+[DISABLE]
+
+playerbase+0D:
+  db 49 8B 00 0F B6 8A 04 01 00 00
+
+unregistersymbol(playerbase)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>167</ID>
+              <Description>"Guide for Quest Teleport"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>808040</Color>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>151</ID>
+                  <Description>"Steps:"</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>155</ID>
+                  <Description>"1. Turn on the "Toggle Cheat"."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>153</ID>
+                  <Description>"2. Go back in game, open up quest menu and activate navigation button."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>154</ID>
+                  <Description>"3. Return to Cheat Engine, check if Quest XYZ detects new "Array of Byte"."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>152</ID>
+                  <Description>"4. Select the mode, Quest Teleport."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>173</ID>
+                  <Description>"5. Your character in game will teleport to destiny quest."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>166</ID>
+              <Description>"Guide for Mob Vac"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>808040</Color>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>168</ID>
+                  <Description>"Steps:"</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>169</ID>
+                  <Description>"1. Turn on the "Toggle Cheat"."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>170</ID>
+                  <Description>"2. Go back in game, move your character around a bit."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>174</ID>
+                  <Description>"3. Return to Cheat Engine, check if Player XYZ detects new "Array of Byte"."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>171</ID>
+                  <Description>"4. Select the mode, Mobs Vacuum."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>172</ID>
+                  <Description>"5. Mobs within range will come to your side and stayed as you moving."</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>808040</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>146</ID>
+              <Description>"Toggle Cheat"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(telequest,UserAssembly.dll,f2 0f 10 73 ? 8b 7b ? f6 80) // should be unique
+alloc(newmem,$1000,telequest)
+
+label(code)
+label(return)
+
+alloc(QuestPosValue,12)
+
+newmem:
+  movsd xmm6,[rbx+74]
+  movsd [QuestPosValue],xmm6
+  mov edi,[rbx+7C]
+  mov [QuestPosValue+8],edi
+  jmp telequest+8
+
+code:
+  movsd xmm6,[rbx+74]
+  jmp return
+
+telequest:
+  jmp newmem
+return:
+registersymbol(telequest)
+registersymbol(QuestPosValue)
+
+/*---------------------------------------------------------------------------*/
+
+aobscanmodule(mobvac,UnityPlayer.dll,8b 41 ? 89 43 ? 8b 41 ? 89 43 ? 8b 41 ? 89 43 ? 3b b7) // should be unique
+alloc(newmem2,$1000,mobvac)
+
+label(code2)
+label(return2)
+
+alloc(ONOFF,4)
+alloc(dupeStack,12)
+registersymbol(ONOFF)
+registersymbol(dupeStack)
+
+alloc(dupe2,2048)
+alloc(dupe3,2048)
+alloc(dupe4,2048)
+
+newmem2:
+  mov eax,[rcx+10]
+  cmp rcx,[dupeStack]
+  je dupe2
+  cmp eax,[GodModStack2]
+  je dupe2
+  cmp [ONOFF],02
+  je dupe4
+  mov eax,[rcx+10]
+  mov [rbx+30],eax
+  mov eax,[rcx+14]
+  mov [rbx+34],eax
+  mov eax,[rcx+18]
+  mov [rbx+38],eax
+  jmp mobvac+12
+
+  dupe2:
+  cmp [ONOFF],01
+  je dupe3
+  mov eax,[rcx+10]
+  mov [dupeStack],rcx
+  mov [rbx+30],eax
+  mov eax,[rcx+14]
+  mov [rbx+34],eax
+  mov eax,[rcx+18]
+  mov [rbx+38],eax
+  jmp mobvac+12
+
+  dupe3:
+  mov eax,[QuestPosValue]
+  mov [rcx+10],eax
+  mov [dupeStack],rcx
+  mov [rbx+30],eax
+  mov eax,[QuestPosValue+4]
+  add eax,0002f000
+  mov [rcx+14],eax
+  mov [rbx+34],eax
+  mov eax,[QuestPosValue+8]
+  mov [rcx+18],eax
+  mov [rbx+38],eax
+  jmp mobvac+12
+
+  dupe4:
+  mov eax,[GodModStack2]
+  add eax,00005000
+  mov [rcx+10],eax
+  mov [rbx+30],eax
+  mov eax,[GodModStack2+4]
+  add eax,00021000
+  mov [rcx+14],eax
+  mov [rbx+34],eax
+  mov eax,[GodModStack2+8]
+  mov [rcx+18],eax
+  mov [rbx+38],eax
+  jmp mobvac+12
+
+code2:
+  mov eax,[rcx+10]
+  mov [rbx+30],eax
+  jmp return2
+
+ONOFF:
+  db 00 00 00 00
+
+mobvac:
+  jmp newmem2
+  nop
+return2:
+registersymbol(mobvac)
+
+[DISABLE]
+
+telequest:
+  db F2 0F 10 73 74
+
+unregistersymbol(telequest)
+dealloc(newmem)
+
+/*--------------------*/
+
+mobvac:
+  db 8B 41 10 89 43 30
+
+unregistersymbol(mobvac)
+dealloc(newmem2)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>148</ID>
+                  <Description>"Mode (select and freeze/tick this)"</Description>
+                  <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:OFF
+1:Quest Teleport
+2:Mobs Vacuum
+</DropDownList>
+                  <Color>000000</Color>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>ONOFF</Address>
+                  <Hotkeys>
+                    <Hotkey>
+                      <Action>Set Value</Action>
+                      <Keys>
+                        <Key>103</Key>
+                      </Keys>
+                      <Value>1</Value>
+                      <ID>0</ID>
+                    </Hotkey>
+                    <Hotkey>
+                      <Action>Set Value</Action>
+                      <Keys>
+                        <Key>104</Key>
+                      </Keys>
+                      <Value>0</Value>
+                      <ID>1</ID>
+                    </Hotkey>
+                  </Hotkeys>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>157</ID>
+                      <Description>"Player XYZ"</Description>
+                      <ShowAsHex>1</ShowAsHex>
+                      <Color>808040</Color>
+                      <VariableType>Array of byte</VariableType>
+                      <ByteLength>12</ByteLength>
+                      <Address>dupeStack</Address>
+                      <Offsets>
+                        <Offset>10</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>147</ID>
+                      <Description>"Quest XYZ"</Description>
+                      <ShowAsHex>1</ShowAsHex>
+                      <Color>808040</Color>
+                      <VariableType>Array of byte</VariableType>
+                      <ByteLength>12</ByteLength>
+                      <Address>QuestPosValue</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>179</ID>
+          <Description>"Player Coords"</Description>
+          <Options moHideChildren="1"/>
+          <LastState/>
+          <Color>000000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version: 
+  Date   : 2020-11-11
+  Author : MGGA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(tp,UnityPlayer.dll,F3 0F 58 47 50 48) // should be unique
+alloc(newmem,$1000,tp)
+
+label(code)
+label(return)
+label(p_coords)
+
+newmem:
+  mov [p_coords],rdi
+
+code:
+  addss xmm0,[rdi+50]
+  jmp return
+
+p_coords:
+dq 0
+
+tp:
+  jmp newmem
+return:
+registersymbol(tp)
+registersymbol(p_coords)
+
+[DISABLE]
+
+tp:
+  db F3 0F 58 47 50
+
+unregistersymbol(tp)
+unregistersymbol(p_coords)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>26</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>p_coords</Address>
+              <Offsets>
+                <Offset>A8</Offset>
+                <Offset>8</Offset>
+                <Offset>78</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>29</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>p_coords</Address>
+              <Offsets>
+                <Offset>A0</Offset>
+                <Offset>8</Offset>
+                <Offset>78</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>28</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>p_coords</Address>
+              <Offsets>
+                <Offset>A4</Offset>
+                <Offset>8</Offset>
+                <Offset>78</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <LuaScript>attachlist=getAutoAttachList()
+stringlist_add(attachlist,"GenshinImpact.exe")
+function onOpenProcess()
+  local timer = createTimer(nil, false)
+  timer.Interval = 10
+  timer.OnTimer = function(timer)
+    local list = getAddressList()
+    local mem = list.getMemoryRecordByDescription("Genshin Impact v1.1 (2020/11/14)")
+    mem.Active = true
+    timer.Destroy()
+  end
+  timer.Enabled = true
+end
+</LuaScript>
+</CheatTable>

@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LunarTable CheatEngineTableVersion="34">
+  <LunarEntries>
+    <LunarEntry>
+      <ID>43</ID>
+      <Description>"Auto Range Kill (open world only)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanRegion(aoscreenkill,GenshinImpact.exe,UnityPlayer.dll,F2 0F ? ? ? 89 45 ? 48 8B ? ? F2 0F ? ? ? 48 85 ? 0F 84 ? ? ? ? 48 89)
+alloc(nscreenkill,$1000,aoscreenkill)
+alloc(set_newDeathZone,$16)
+label(rscreenkill)
+label(resscreenkill)
+registersymbol(nscreenkill)
+
+set_newDeathZone:
+dd 1
+
+nscreenkill:
+movsd xmm0,[set_newDeathZone]
+movsd [rbx+58],xmm0
+
+resscreenkill:
+readmem(aoscreenkill,5)
+jmp rscreenkill
+
+aoscreenkill:
+jmp nscreenkill
+rscreenkill:
+registersymbol(aoscreenkill resscreenkill set_newDeathZone rscreenkill)
+
+{$lua}
+local artm = createTimer()
+artm.Interval = 3 * 1000 -- 1000 milliseconds per second
+artm.OnTimer = function(theTimerCallingThisFunction)
+
+local scriptStr = [[
+aoscreenkill:
+readmem(resscreenkill,5)
+ ]]
+
+autoAssemble(scriptStr)
+
+  artm.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+[DISABLE]
+aoscreenkill:
+readmem(resscreenkill,5)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Auto Range Kill on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>186</ID>
+          <Description>"Auto Range Kill on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+{$lua}
+local scriptStr = [[
+    aoscreenkill:
+    jmp nscreenkill
+    rscreenkill:
+ ]]
+
+autoAssemble(scriptStr)
+
+
+local getmr = getAddressList().getMemoryRecordByDescription
+local first = getmr("Auto Range Kill on/off")
+
+local arktm = createTimer()
+arktm.Interval = 4 * 1000 -- 1000 milliseconds per second
+arktm.OnTimer = function(theTimerCallingThisFunction)
+  first.Active = false -- deactivate the script
+  arktm.destroy() -- destroy the timer so it doesn't keep running
+end
+
+{$asm}
+
+
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+{$lua}
+local scriptStr = [[
+    aoscreenkill:
+    readmem(resscreenkill,5)
+ ]]
+
+autoAssemble(scriptStr)
+{$asm}
+
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>189</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>163</ID>
+      <Description>"Dumb Enemy"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aoinvicibility,GenshinImpact.exe,UnityPlayer.dll,74 66 48 8B 8B 18 01 00 00)
+alloc(resinvicibility,8)
+resinvicibility:
+readmem(aoinvicibility,1)
+aoinvicibility:
+db 74
+registersymbol(aoinvicibility resinvicibility)
+[DISABLE]
+aoinvicibility:
+readmem(resinvicibility,1)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Dumb Enemy on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>185</ID>
+          <Description>"Dumb Enemy on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+aoinvicibility:
+db 75
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+aoinvicibility:
+readmem(resinvicibility,1)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>48</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>166</ID>
+      <Description>"Elemental Sight"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aoElementalSight,GenshinImpact.exe,UnityPlayer.dll,80 7B ? ? 0F 57 F6)
+alloc(resElementalSight,8)
+resElementalSight:
+readmem(aoElementalSight,7)
+aoElementalSight:
+//db 80 7B 50 01 0F 57 F6
+registersymbol(aoElementalSight resElementalSight)
+[DISABLE]
+aoElementalSight:
+readmem(resElementalSight,7)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Elemental Sight on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>184</ID>
+          <Description>"Elemental Sight on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+aoElementalSight:
+db 80 7B 50 01 0F 57 F6
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+aoElementalSight:
+readmem(resElementalSight,7)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>57</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>162</ID>
+      <Description>"God Mode"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aogodmode,GenshinImpact.exe,UnityPlayer.dll,48 8B ? 48 8D ? ? ? 48 8B ? ? 4C 8B 80)
+alloc(ngodmode,$1000,aogodmode)
+alloc(aophp,$8)
+label(rgodmode)
+label(resgodmode)
+ngodmode:
+mov [aophp],rdx
+resgodmode:
+readmem(aogodmode,8)
+jmp rgodmode
+aogodmode:
+jmp ngodmode
+nop 3
+rgodmode:
+registersymbol(aogodmode resgodmode aophp ngodmode rgodmode)
+aobScanRegion(aopinvis,GenshinImpact.exe,UnityPlayer.dll,C3 B0 ? 48 8B ? ? ? 48 8B ? ? ? 48 83 C4 ? 5E C3 32 C0 48 8B ? ? ? 48 83 C4 ? 5E C3 45 33 ? BA ? ? ? ? 33 C9 E8 ? ? ? ? 48 85 ? 74 ? 45 33 ? 4C 8B)
+alloc(npinvis,$1000,aopinvis)
+label(rpinvis)
+label(respinvis)
+npinvis:
+cmp [aophp],rbx
+mov al,01
+jne @f
+xor al,al
+mov rdi,[rsp+30]
+mov rbx,[rsp+38]
+jmp rpinvis
+registersymbol(npinvis)
+respinvis:
+readmem(aopinvis+01,7)
+jmp rpinvis
+aopinvis+01:
+jmp npinvis
+nop 2
+rpinvis:
+registersymbol(aopinvis respinvis rpinvis)
+
+{$lua}
+local gdtm = createTimer()
+gdtm.Interval = 3 * 1000 -- 1000 milliseconds per second
+gdtm.OnTimer = function(theTimerCallingThisFunction)
+
+local scriptStr = [[
+aogodmode:
+readmem(resgodmode,8)
+aopinvis+01:
+readmem(respinvis,7)
+ ]]
+
+autoAssemble(scriptStr)
+
+  gdtm.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+[DISABLE]
+aogodmode:
+readmem(resgodmode,8)
+aopinvis+01:
+readmem(respinvis,7)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("God Mode on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>183</ID>
+          <Description>"God Mode on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+aogodmode:
+jmp ngodmode
+nop 3
+rgodmode:
+
+aopinvis+01:
+jmp npinvis
+nop 2
+rpinvis:
+
+
+
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+aogodmode:
+readmem(resgodmode,8)
+aopinvis+01:
+readmem(respinvis,7)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>56</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>175</ID>
+      <Description>"Instant Bow Charge"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aobowinstant,GenshinImpact.exe,UnityPlayer.dll,0F 11 ? ? 48 85 ? 0F 84 ? ? ? ? 48 8B ? ? 4C 8D ? ? ? 0F 10)
+alloc(resbowinstant,8)
+resbowinstant:
+readmem(aobowinstant,4)
+aobowinstant:
+db 90 90 90 90
+registersymbol(aobowinstant resbowinstant)
+
+{$lua}
+local ibtm = createTimer()
+ibtm.Interval = 3 * 1000 -- 1000 milliseconds per second
+ibtm.OnTimer = function(theTimerCallingThisFunction)
+
+local scriptStr = [[
+aobowinstant:
+readmem(resbowinstant,4)
+ ]]
+
+autoAssemble(scriptStr)
+
+  ibtm.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+[DISABLE]
+aobowinstant:
+readmem(resbowinstant,4)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Instant Bow Charge on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>190</ID>
+          <Description>"Instant Bow Charge on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+aobowinstant:
+db 90 90 90 90
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+aobowinstant:
+readmem(resbowinstant,4)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>219</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>164</ID>
+      <Description>"Chest Esp"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aochestvis,GenshinImpact.exe,UnityPlayer.dll,75 39 40 84 ED 74 1A)
+alloc(reschestvis,8)
+reschestvis:
+readmem(aochestvis,6)
+aochestvis:
+db 74 39 40 84 ED 75
+registersymbol(aochestvis reschestvis)
+aobScanRegion(aochestvis2,GenshinImpact.exe,UnityPlayer.dll,75 11 33 D2 48 8B CF E8 ? ? ? ? C6 87 ? 00 00 00 01)
+alloc(reschestvis2,8)
+reschestvis2:
+readmem(aochestvis2,7)
+aochestvis2:
+db 74 11
+registersymbol(aochestvis2 reschestvis2)
+aobScanRegion(aochestdis,GenshinImpact.exe,UnityPlayer.dll,74 DD 33 D2 48 8B CF)
+alloc(reschestdis,8)
+reschestdis:
+readmem(aochestdis,7)
+aochestdis:
+db 77 DD
+registersymbol(aochestdis reschestdis)
+[DISABLE]
+aochestvis:
+readmem(reschestvis,6)
+aochestvis2:
+readmem(reschestvis2,7)
+aochestdis:
+readmem(reschestdis,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>159</ID>
+      <Description>"Vertical flight"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobScanRegion(fly1,UnityPlayer.dll,UnityPlayer.dll+fffffff,F3 0F 11 5E 14 F3 0F 11) // should be unique
+alloc(newmem,$1000,fly1)
+alloc(flyvar,$100)
+
+label(code)
+label(return)
+
+flyvar:
+dd (float)0.0
+registersymbol(flyvar)
+
+newmem:
+
+code:
+  addss xmm3,[flyvar]
+  movss [rsi+14],xmm3
+  jmp return
+
+
+fly1:
+  jmp newmem
+return:
+registersymbol(fly1)
+
+[DISABLE]
+
+fly1:
+  db F3 0F 11 5E 14
+
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Vertical flight on/off")
+cb1.Active = false
+{$asm}
+
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>181</ID>
+          <Description>"Vertical flight on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+flyvar:
+dd (float)0.8
+
+{$lua}
+local getmr1 = getAddressList().getMemoryRecordByDescription
+local first1 = getmr1("Vertical flight on/off")
+
+local timer1 = createTimer()
+timer1.Interval = 5 * 200 -- 1000 milliseconds per second
+timer1.OnTimer = function(theTimerCallingThisFunction)
+  first1.Active = false -- deactivate the script
+  timer1.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+flyvar:
+dd (float)0.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>54</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>168</ID>
+      <Description>"Fly Hack"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aoflymode,GenshinImpact.exe,UnityPlayer.dll,83 78 24 ? 0F 94 ? 48 83 C4)
+alloc(resflymode,8)
+resflymode:
+readmem(aoflymode,4)
+aoflymode:
+db 83 78 24 01
+registersymbol(aoflymode resflymode)
+aobScanRegion(aoforcefly,GenshinImpact.exe,UnityPlayer.dll,0F 95 ? 88 87 ? ? ? ? 84 C0 0F 85)
+alloc(resforcefly,8)
+resforcefly:
+readmem(aoforcefly,2)
+aoforcefly:
+db 0F 9D
+registersymbol(aoforcefly resforcefly)
+
+{$lua}
+local fhtm = createTimer()
+fhtm.Interval = 3 * 1000 -- 1000 milliseconds per second
+fhtm.OnTimer = function(theTimerCallingThisFunction)
+
+local scriptStr = [[
+aoflymode:
+readmem(resflymode,4)
+aoforcefly:
+readmem(resforcefly,2)
+ ]]
+
+autoAssemble(scriptStr)
+
+  fhtm.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+[DISABLE]
+aoflymode:
+readmem(resflymode,4)
+aoforcefly:
+readmem(resforcefly,2)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Fly Hack on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>182</ID>
+          <Description>"Fly Hack on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+aoflymode:
+db 83 78 24 01
+
+aoforcefly:
+db 0F 9D
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+aoflymode:
+readmem(resflymode,4)
+aoforcefly:
+readmem(resforcefly,2)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>55</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>169</ID>
+      <Description>"No Skill CD"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(skillx,GenshinImpact.exe,UnityPlayer.dll,0F 11 ? ? C3 CC CC CC CC CC CC CC CC 40 ? 48 81 EC) // should be unique
+alloc(r_skillx,4,skillx)
+r_skillx:
+readmem(skillx,4)
+skillx:
+db 90 90 90 90
+registersymbol(skillx)
+registersymbol(r_skillx)
+aobScanRegion(skillxx,GenshinImpact.exe,UnityPlayer.dll,0F 10 ? ? F6 81 0A 01 00 00 ? 74 ? 83 B9 BC 00 00 00 ? 75 ? E8 ? ? ? ? 45 33 ? 66 0F ? ? ? ? 48 8D ? ? ? 33 C9 E8 ? ? ? ? 33 D2 48 8B ? 0F 28 ? E8 ? ? ? ? 48 85 ? 74) // should be unique
+alloc(r_skillxx,4,skillxx)
+r_skillxx:
+readmem(skillxx,4)
+skillxx:
+db 90 90 90 90
+registersymbol(skillxx)
+registersymbol(r_skillxx)
+[DISABLE]
+skillx:
+readmem(r_skillx,4)
+unregistersymbol(skillx)
+unregistersymbol(r_skillx)
+dealloc(r_skillx)
+skillxx:
+readmem(r_skillxx,4)
+unregistersymbol(skillxx)
+unregistersymbol(r_skillxx)
+dealloc(r_skillxx)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>187</ID>
+      <Description>"Auto Pick Up"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : GenshinImpact.exe
+  Version:
+  Date   : 2022-02-25
+  Author : wmr2
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobScanRegion(INJECTpkkk,GenshinImpact.exe,UnityPlayer.dll,CC 88 91 28 01 00 00) // should be unique
+alloc(newmem111,$1000,INJECTpkkk)
+alloc(pick_ck00,$100)
+
+label(code111)
+label(return111)
+
+newmem111:
+
+code111:
+  mov [pick_ck00],dl
+  mov [rcx+00000128],dl
+  jmp return111
+
+INJECTpkkk+01:
+  jmp newmem111
+  nop
+return111:
+registersymbol(INJECTpkkk pick_ck00 newmem111 return111)
+
+aobScanRegion(INJECTpkkk2,GenshinImpact.exe,UnityPlayer.dll,80 BB 28 01 00 00 00 0F 84 F1) // should be unique
+alloc(newmem222,$1000,INJECTpkkk2)
+
+label(code222)
+label(return222)
+
+newmem222:
+
+code222:
+  mov eax,[rbx+00000128]
+  mov [pick_ck00],eax
+  cmp byte ptr [rbx+00000128],00
+  jmp return222
+
+INJECTpkkk2:
+  jmp newmem222
+  nop 2
+return222:
+registersymbol(INJECTpkkk2 newmem222 return222)
+
+{$lua}
+local aptm = createTimer()
+aptm.Interval = 3 * 1000 -- 1000 milliseconds per second
+aptm.OnTimer = function(theTimerCallingThisFunction)
+
+local scriptStr = [[
+INJECTpkkk2:
+  db 80 BB 28 01 00 00 00
+
+INJECTpkkk+01:
+  db 88 91 28 01 00 00
+
+pick_ck00:
+  db 00
+ ]]
+
+autoAssemble(scriptStr)
+
+  aptm.destroy() -- destroy the timer so it doesn't keep running
+end
+{$asm}
+
+{$lua}
+s="F"
+i=1
+
+function typestring()
+addr1 = readInteger('pick_ck00')
+
+if (addr1==1) then
+keyDown(string.byte(s,i))
+keyUp(string.byte(s,i))
+end
+
+end
+
+t=createTimer(nil)
+timer_setInterval(t, 300)
+timer_onTimer(t, typestring)
+timer_setEnabled(t, true)
+{$asm}
+
+[DISABLE]
+INJECTpkkk2:
+  db 80 BB 28 01 00 00 00
+
+INJECTpkkk+01:
+  db 88 91 28 01 00 00
+
+{$lua}
+object_destroy(t)
+{$asm}
+
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Auto Pick Up on/off")
+cb1.Active = false
+{$asm}
+
+{
+// ORIGINAL CODE - INJECTION POINT: 7FFCB4BC1E20
+
+7FFCB4BC1E10: 48 8B 81 44 01 00 00  - mov rax,[rcx+00000144]
+7FFCB4BC1E17: C3                    - ret
+7FFCB4BC1E18: CC                    - int 3
+7FFCB4BC1E19: CC                    - int 3
+7FFCB4BC1E1A: CC                    - int 3
+7FFCB4BC1E1B: CC                    - int 3
+7FFCB4BC1E1C: CC                    - int 3
+7FFCB4BC1E1D: CC                    - int 3
+7FFCB4BC1E1E: CC                    - int 3
+7FFCB4BC1E1F: CC                    - int 3
+// ---------- INJECTING HERE ----------
+7FFCB4BC1E20: 88 91 28 01 00 00     - mov [rcx+00000128],dl
+// ---------- DONE INJECTING  ----------
+7FFCB4BC1E26: C3                    - ret
+7FFCB4BC1E27: CC                    - int 3
+7FFCB4BC1E28: CC                    - int 3
+7FFCB4BC1E29: CC                    - int 3
+7FFCB4BC1E2A: CC                    - int 3
+7FFCB4BC1E2B: CC                    - int 3
+7FFCB4BC1E2C: CC                    - int 3
+7FFCB4BC1E2D: CC                    - int 3
+7FFCB4BC1E2E: CC                    - int 3
+7FFCB4BC1E2F: CC                    - int 3
+}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>189</ID>
+          <Description>"Auto Pick Up on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+INJECTpkkk+01:
+  jmp newmem111
+  nop
+return111:
+
+INJECTpkkk2:
+  jmp newmem222
+  nop 2
+return222:
+
+[DISABLE]
+INJECTpkkk2:
+  db 80 BB 28 01 00 00 00
+
+INJECTpkkk+01:
+  db 88 91 28 01 00 00
+
+pick_ck00:
+  db 00
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>187</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>176</ID>
+      <Description>"Pick Up Range (40m)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aopickrange,GenshinImpact.exe,UnityPlayer.dll,18 F3 0F 5C ? ? F3 0F ? ? F3 0F ? ? F3 0F)
+alloc(npickrange,$1000,aopickrange)
+alloc(set_range,$100)
+registersymbol(set_range)
+label(rpickrange)
+label(respickrange)
+set_range:
+dd (float)40
+npickrange:
+movss xmm0,[set_range]
+respickrange:
+readmem(aopickrange+01,5)
+jmp rpickrange
+aopickrange+01:
+jmp npickrange
+rpickrange:
+registersymbol(aopickrange respickrange)
+[DISABLE]
+aopickrange+01:
+readmem(respickrange,5)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>170</ID>
+      <Description>"Unlimited Stamina"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aostamina,GenshinImpact.exe,UnityPlayer.dll,0F 11 04 C1 FF 43 50 48 81 C4 98 00 00 00 41 5E 5E 5D 5B C3 E8 DB)
+alloc(nstamina,$1000,aostamina)
+label(rstamina)
+label(resstamina)
+nstamina:
+cmp rdi,271B
+jne @f
+movups xmm0,[rcx+rax*8]
+jmp resstamina
+@@:
+resstamina:
+readmem(aostamina,7)
+jmp rstamina
+aostamina:
+jmp nstamina
+nop 2
+rstamina:
+registersymbol(aostamina resstamina)
+[DISABLE]
+aostamina:
+readmem(resstamina,7)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>191</ID>
+      <Description>"Speed hack"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aomovspeed,UnityPlayer.dll,UnityPlayer.dll+fffffff,42 89 ? ? ? B8 ? ? ? ? 48 83 C4 ? 5F C3 CC CC CC CC CC CC CC CC CC CC CC CC CC)
+alloc(nmovspeed,$1000,aomovspeed)
+label(rmovspeed)
+label(resmovspeed)
+label(lmovspeed)
+nmovspeed:
+cmp rdx,108
+jne resmovspeed
+mov eax,[lmovspeed]
+resmovspeed:
+readmem(aomovspeed,5)
+jmp rmovspeed
+lmovspeed:
+dd (float)1
+aomovspeed:
+jmp nmovspeed
+rmovspeed:
+registersymbol(aomovspeed resmovspeed lmovspeed)
+
+[DISABLE]
+aomovspeed:
+readmem(resmovspeed,5)
+unregistersymbol(*)
+dealloc(*)
+
+{$lua}
+local ds1 = getAddressList().getMemoryRecordByDescription
+local cb1 = ds1("Speed hack on/off")
+cb1.Active = false
+{$asm}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>192</ID>
+          <Description>"Speed hack on/off"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+lmovspeed:
+dd (float)2
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+lmovspeed:
+dd (float)1
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>221</Key>
+              </Keys>
+              <ID>0</ID>
+              <ActivateSound>Activate</ActivateSound>
+              <DeactivateSound>Deactivate</DeactivateSound>
+            </Hotkey>
+          </Hotkeys>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>177</ID>
+      <Description>"Damage Hack (for certain chara only)"</Description>
+      <Options moDeactivateChildrenAsWell="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aostats,GenshinImpact.exe,UnityPlayer.dll,F3 0F ? ? ? F3 0F ? ? 48 8B ? ? ? ? ? ? F3 0F)
+alloc(nstats,$1000,aostats)
+alloc(set_stats,$4)
+label(rstats)
+label(resstats)
+set_stats:
+dd (float)50
+nstats:
+movss xmm0,[set_stats]
+resstats:
+readmem(aostats,5)
+jmp rstats
+aostats:
+jmp nstats
+rstats:
+registersymbol(aostats resstats set_stats nstats rstats)
+aobScanRegion(aodmgmul,GenshinImpact.exe,UnityPlayer.dll,06 F3 0F ? ? 48 83 C4 ? 5B C3 49 8B ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC 48 89)
+alloc(ndmgmul,$1000,aodmgmul)
+alloc(set_damage,$32)
+label(rdmgmul)
+label(resdmgmul)
+set_damage:
+dd (float)10
+ndmgmul:
+movss xmm0,[rax]
+add rsp,20
+cmp [rax],(float)4
+je @f
+cmp [rax],(float)3
+je @f
+cmp [rax],(float)-1
+je @f
+movss xmm0,[set_damage]
+resdmgmul:
+jmp rdmgmul
+aodmgmul+01:
+jmp ndmgmul
+nop 3
+rdmgmul:
+registersymbol(aodmgmul resdmgmul set_damage)
+
+[DISABLE]
+aostats:
+readmem(resstats,5)
+aodmgmul+01:
+db F3 0F 10 00 48 83 C4 20
+unregistersymbol(*)
+dealloc(*)
+
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <LunarEntries>
+        <LunarEntry>
+          <ID>178</ID>
+          <Description>"&lt;&lt;&lt;Click for Information"</Description>
+          <Color>FF0080</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[enable]
+{$LUA}
+getMainForm().CommentButton.doClick()
+{$ASM}
+[disable]
+</AssemblerScript>
+        </LunarEntry>
+        <LunarEntry>
+          <ID>179</ID>
+          <Description>"Stats Multiple"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>set_stats</Address>
+        </LunarEntry>
+        <LunarEntry>
+          <ID>180</ID>
+          <Description>"Attack Multiple"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>set_damage</Address>
+        </LunarEntry>
+      </LunarEntries>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>165</ID>
+      <Description>"Monster Esp"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aomobesp,GenshinImpact.exe,UnityPlayer.dll,76 ? C6 83 E1 00 00 00)
+alloc(resmobesp,8)
+resmobesp:
+readmem(aomobesp,1)
+aomobesp:
+db 74
+registersymbol(aomobesp resmobesp)
+aobScanRegion(aomoblvl,GenshinImpact.exe,UnityPlayer.dll,0F 87 ? ? ? ? 48 8B ? ? ? ? ? C6 83 B8 00 00 00)
+alloc(resmoblvl,8)
+resmoblvl:
+readmem(aomoblvl,2)
+aomoblvl:
+db 0F 84
+registersymbol(aomoblvl resmoblvl)
+[DISABLE]
+aomobesp:
+readmem(resmobesp,1)
+aomoblvl:
+readmem(resmoblvl,2)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys/>
+          <ID>0</ID>
+        </Hotkey>
+        <Hotkey>
+          <Action>Activate</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>35</Key>
+          </Keys>
+          <ID>1</ID>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+    <LunarEntry>
+      <ID>172</ID>
+      <Description>"Double Attack "</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{  Game Executable   : GenshinImpact.exe
+   Executable Version: 2017.4.30.0
+   Script Date       : 2022-02-18
+   Author            : AlvinC
+}
+
+[ENABLE]
+aobScanRegion(aodoubleatk,UnityPlayer.dll,UnityPlayer.dll+fffffff,8B 47 ? 89 47 ? 8B 47 ? 89 47 ? 8B 47 ? 89 47 ? 66 C7 47)
+alloc(resdoubleatk,8)
+resdoubleatk:
+readmem(aodoubleatk,6)
+aodoubleatk:
+db 10 47 30 89 47 2C
+registersymbol(aodoubleatk resdoubleatk)
+[DISABLE]
+aodoubleatk:
+readmem(resdoubleatk,6)
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>220</Key>
+          </Keys>
+          <ID>0</ID>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+    </LunarEntry>
+  </LunarEntries>
+  <UserdefinedSymbols/>
+  <Comments>Big credit to galpt for the dmg scripts and its information.
+--- Recommended chara list to use "damage multiply" with ---
+• Raiden blade atk (requires her Q skill)
+• Diluc Q
+• Thoma normal &amp; charge atk (requires his Q skill)
+• Mona charge atk
+• Hutao charge atk (requires her E skill bloom)
+• Amber All Skill Set
+• Tabibito/Traveler hold E skill (Anemo)
+• Eula Q (wait until her floating blade blows up)
+• Eula Q + Lisa Q combined (elemental reaction)
+• Shenhe E skill (without holding)
+• Needs more tests...
+--- Recommended chara list to use "stats multiply" with ---
+• Characters with shield skill (Diona, Noelle, Thoma, etc.)
+• Characters with stats buff (Hu Tao, Bennett, etc.)
+• Characters with durational E/Q (Raiden, Hu Tao, etc.)
+• Needs more tests...
+</Comments>
+
+</LunarTable>

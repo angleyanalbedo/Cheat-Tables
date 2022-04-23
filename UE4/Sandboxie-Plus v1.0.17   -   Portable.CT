@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="42">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>9</ID>
+      <Description>"Group 1"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"the selected 代码"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SandMan.exe+64D4</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>"the selected 位置"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>String</VariableType>
+          <Length>0</Length>
+          <Unicode>0</Unicode>
+          <CodePage>0</CodePage>
+          <ZeroTerminate>1</ZeroTerminate>
+          <Address>SandMan.exe.rdata+8060</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"证书"</Description>
+          <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">2147483648:消除
+0:正常
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SandMan.exe+12A2B8</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>10</ID>
+      <Description>"Group 2"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"the program"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SandMan.exe.text+df71</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>6</ID>
+          <Description>"the program 内存位置"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>String</VariableType>
+          <Length>10</Length>
+          <Unicode>0</Unicode>
+          <CodePage>0</CodePage>
+          <ZeroTerminate>1</ZeroTerminate>
+          <Address>SandMan.exe.rdata+7e30</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>7</ID>
+          <Description>"the program 判断证书"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SandMan.exe.text+decf</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"the program 的窗口消除"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,"SandMan.exe"+EED5) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+je SandMan.exe+F180
+
+exit:
+jmp returnhere
+
+"SandMan.exe"+EED5:
+jmp newmem
+nop
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+"SandMan.exe"+EED5:
+jne SandMan.exe+F180
+//Alt: db 0F 85 A5 02 00 00
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>11</ID>
+      <Description>"No description"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>4 Bytes</VariableType>
+      <Address>SandMan.exe.text+16e2c</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>12</ID>
+      <Description>"call api"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>4 Bytes</VariableType>
+      <Address>SandMan.exe.text+16de1</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>判断证书 :je SandMan.exe+6467</Description>
+      <AddressString>SandMan.exe+645E</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>80</Byte>
+      </Before>
+      <Actual>
+        <Byte>74</Byte>
+        <Byte>07</Byte>
+      </Actual>
+      <After>
+        <Byte>B0</Byte>
+        <Byte>01</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C4</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>theselected :lea r8,[SandMan.exe+B5060]</Description>
+      <AddressString>SandMan.exe+64D4</AddressString>
+      <Before>
+        <Byte>FF</Byte>
+        <Byte>FF</Byte>
+        <Byte>45</Byte>
+        <Byte>33</Byte>
+        <Byte>C9</Byte>
+      </Before>
+      <Actual>
+        <Byte>4C</Byte>
+        <Byte>8D</Byte>
+        <Byte>05</Byte>
+        <Byte>85</Byte>
+        <Byte>EB</Byte>
+        <Byte>0A</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8D</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>78</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>判读证书 :test [SandMan.exe+12A2B8],80000000</Description>
+      <AddressString>SandMan.exe+6454</AddressString>
+      <Before>
+        <Byte>CC</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>EC</Byte>
+        <Byte>68</Byte>
+      </Before>
+      <Actual>
+        <Byte>F7</Byte>
+        <Byte>05</Byte>
+        <Byte>5A</Byte>
+        <Byte>3E</Byte>
+        <Byte>12</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>80</Byte>
+      </Actual>
+      <After>
+        <Byte>74</Byte>
+        <Byte>07</Byte>
+        <Byte>B0</Byte>
+        <Byte>01</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>theprogram :lea r8,[SandMan.exe+B4E30]</Description>
+      <AddressString>SandMan.exe+EF71</AddressString>
+      <Before>
+        <Byte>84</Byte>
+        <Byte>BA</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>4C</Byte>
+        <Byte>8D</Byte>
+        <Byte>05</Byte>
+        <Byte>B8</Byte>
+        <Byte>5E</Byte>
+        <Byte>0A</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>FF</Byte>
+        <Byte>15</Byte>
+        <Byte>D2</Byte>
+        <Byte>FA</Byte>
+        <Byte>09</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>判断theprogram :cmp edi,00001774</Description>
+      <AddressString>SandMan.exe+EECF</AddressString>
+      <Before>
+        <Byte>E9</Byte>
+        <Byte>B1</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>81</Byte>
+        <Byte>FF</Byte>
+        <Byte>74</Byte>
+        <Byte>17</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>84</Byte>
+        <Byte>A5</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>cer :lea r8,[SandMan.exe+B6CB0]</Description>
+      <AddressString>SandMan.exe+17E2C</AddressString>
+      <Before>
+        <Byte>FF</Byte>
+        <Byte>FF</Byte>
+        <Byte>45</Byte>
+        <Byte>33</Byte>
+        <Byte>C9</Byte>
+      </Before>
+      <Actual>
+        <Byte>4C</Byte>
+        <Byte>8D</Byte>
+        <Byte>05</Byte>
+        <Byte>7D</Byte>
+        <Byte>EE</Byte>
+        <Byte>09</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8D</Byte>
+        <Byte>55</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <Structures StructVersion="2">
+    <Structure Name="unnamed structure" AutoFill="0" AutoCreate="1" DefaultHex="0" AutoDestroy="0" DoNotSaveLocal="0" RLECompression="1" AutoCreateStructsize="4096">
+      <Elements>
+        <Element Offset="0" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000000" DisplayMethod="hexadecimal"/>
+        <Element Offset="4" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000004" DisplayMethod="unsigned integer"/>
+        <Element Offset="12" Vartype="Double" Bytesize="8" OffsetHex="0000000C" DisplayMethod="unsigned integer"/>
+        <Element Offset="20" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000014" DisplayMethod="hexadecimal"/>
+        <Element Offset="24" Vartype="4 Bytes" Bytesize="4" RLECount="36" OffsetHex="00000018" DisplayMethod="unsigned integer"/>
+        <Element Offset="168" Vartype="Byte" Bytesize="1" RLECount="4" OffsetHex="000000A8" DisplayMethod="unsigned integer"/>
+        <Element Offset="172" Vartype="4 Bytes" Bytesize="4" OffsetHex="000000AC" DisplayMethod="hexadecimal"/>
+        <Element Offset="176" Vartype="Pointer" Bytesize="8" OffsetHex="000000B0" DisplayMethod="unsigned integer"/>
+        <Element Offset="184" Vartype="4 Bytes" Bytesize="4" RLECount="366" OffsetHex="000000B8" DisplayMethod="unsigned integer"/>
+        <Element Offset="1648" Vartype="Pointer" Bytesize="8" RLECount="2" OffsetHex="00000670" DisplayMethod="unsigned integer"/>
+        <Element Offset="1664" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000680" DisplayMethod="unsigned integer"/>
+        <Element Offset="1672" Vartype="Pointer" Bytesize="8" OffsetHex="00000688" DisplayMethod="unsigned integer"/>
+        <Element Offset="1680" Vartype="4 Bytes" Bytesize="4" RLECount="8" OffsetHex="00000690" DisplayMethod="unsigned integer"/>
+        <Element Offset="1712" Vartype="4 Bytes" Bytesize="4" OffsetHex="000006B0" DisplayMethod="hexadecimal"/>
+        <Element Offset="1716" Vartype="4 Bytes" Bytesize="4" RLECount="423" OffsetHex="000006B4" DisplayMethod="unsigned integer"/>
+        <Element Offset="3408" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D50" DisplayMethod="hexadecimal"/>
+        <Element Offset="3412" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D54" DisplayMethod="unsigned integer"/>
+        <Element Offset="3420" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D5C" DisplayMethod="hexadecimal"/>
+        <Element Offset="3424" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D60" DisplayMethod="unsigned integer"/>
+        <Element Offset="3432" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D68" DisplayMethod="hexadecimal"/>
+        <Element Offset="3436" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D6C" DisplayMethod="unsigned integer"/>
+        <Element Offset="3444" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D74" DisplayMethod="hexadecimal"/>
+        <Element Offset="3448" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D78" DisplayMethod="unsigned integer"/>
+        <Element Offset="3456" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D80" DisplayMethod="hexadecimal"/>
+        <Element Offset="3460" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D84" DisplayMethod="unsigned integer"/>
+        <Element Offset="3468" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D8C" DisplayMethod="hexadecimal"/>
+        <Element Offset="3472" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D90" DisplayMethod="unsigned integer"/>
+        <Element Offset="3480" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000D98" DisplayMethod="hexadecimal"/>
+        <Element Offset="3484" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000D9C" DisplayMethod="unsigned integer"/>
+        <Element Offset="3492" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DA4" DisplayMethod="hexadecimal"/>
+        <Element Offset="3496" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DA8" DisplayMethod="unsigned integer"/>
+        <Element Offset="3504" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DB0" DisplayMethod="hexadecimal"/>
+        <Element Offset="3508" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DB4" DisplayMethod="unsigned integer"/>
+        <Element Offset="3516" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DBC" DisplayMethod="hexadecimal"/>
+        <Element Offset="3520" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DC0" DisplayMethod="unsigned integer"/>
+        <Element Offset="3528" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DC8" DisplayMethod="hexadecimal"/>
+        <Element Offset="3532" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DCC" DisplayMethod="unsigned integer"/>
+        <Element Offset="3540" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DD4" DisplayMethod="hexadecimal"/>
+        <Element Offset="3544" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DD8" DisplayMethod="unsigned integer"/>
+        <Element Offset="3552" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DE0" DisplayMethod="hexadecimal"/>
+        <Element Offset="3556" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DE4" DisplayMethod="unsigned integer"/>
+        <Element Offset="3564" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DEC" DisplayMethod="hexadecimal"/>
+        <Element Offset="3568" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000DF0" DisplayMethod="unsigned integer"/>
+        <Element Offset="3576" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000DF8" DisplayMethod="hexadecimal"/>
+        <Element Offset="3580" Vartype="4 Bytes" Bytesize="4" RLECount="14" OffsetHex="00000DFC" DisplayMethod="unsigned integer"/>
+        <Element Offset="3636" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000E34" DisplayMethod="hexadecimal"/>
+        <Element Offset="3640" Vartype="4 Bytes" Bytesize="4" RLECount="2" OffsetHex="00000E38" DisplayMethod="unsigned integer"/>
+        <Element Offset="3648" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000E40" DisplayMethod="hexadecimal"/>
+        <Element Offset="3652" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000E44" DisplayMethod="unsigned integer"/>
+        <Element Offset="3656" Vartype="4 Bytes" Bytesize="4" RLECount="11" OffsetHex="00000E48" DisplayMethod="hexadecimal"/>
+        <Element Offset="3700" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000E74" DisplayMethod="unsigned integer"/>
+        <Element Offset="3704" Vartype="4 Bytes" Bytesize="4" RLECount="98" OffsetHex="00000E78" DisplayMethod="hexadecimal"/>
+      </Elements>
+    </Structure>
+  </Structures>
+</CheatTable>

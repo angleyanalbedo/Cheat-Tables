@@ -1,0 +1,1211 @@
+<html style="background: #acacac">
+<head>
+<meta http-equiv="x-ua-compatible" content="ie=9"/>
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<title>AoB Tools (ver.2020.4.13)</title>
+<style type="text/css">
+		body {
+			filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=White, EndColorStr=#acacac); 
+			font-family:Verdana; 
+			font-size: 12px; 
+			color: #5e5e5e;
+			background-color: -ms-linear-gradient(top, #2F2727, #1a82f7);
+			text-align: center;
+			border-collapse: collapse; 
+			margin: 0px;
+			position: relative;
+			top: 0px;
+			}
+
+		#seldd {
+			width: 100px;
+				}
+		button { 
+		 filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=White, EndColorStr=#acacac); 
+		 font-family:Verdana; 
+		 font-size: 14px; 
+		 height: 30px; 
+		 width: 150px; 
+		 font-weight: bold; 
+			}
+			
+			h3 {
+			margin-top: 5px;
+			}
+			
+			
+		td { 
+			border-width: 0px; 
+			padding: 3px; 
+			border-style: solid; 
+			border-color: black; 
+			
+			}
+		.tableNorm { 
+			filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=white, EndColorStr=#acacac); 
+			font-size: 10px;
+			font-weight: color;
+			color: black; 
+			}
+		.info1 {   
+			text-align: center; 
+			font-size: 8pt; 
+			font-weight: color;
+			color: black; 
+			} 
+		.tabs { 
+			border-collapse: collapse; 
+			color: black; 
+			cursor: pointer; 
+			cursor: hand; 
+			font-family: arial; 
+			font-size: 9pt; 
+			font-weight: bold; 
+			margin-top: 4px; 
+			padding: 2px 4px 0px 4px; 
+			position: relative; 
+			text-align: center; 
+			text-decoration: none;
+			z-index: 1; 
+			} 
+		.tabsNotSelected { 
+			background-color: grey; 
+			border: solid 1px black; 
+			} 
+		.tabsSelected { 
+			filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#FFFFFF, EndColorStr=#aaacae;
+			border-color: black black white black; 
+			border-style: solid solid solid solid; 
+			border-width: 1px 1px 1px 1px; 
+			}
+
+		
+	</style>
+	<!--Styles defined for doc (end)-->
+	<!--Scripts to control app window size, position, and behavior (start)-->
+	<script language="VBScript">
+	Function Window_OnLoad()
+	call ResizeWindow()
+	end function
+	'========================
+	Function ResizeWindow()
+	
+	hght = document.documentElement.clientHeight
+
+		Do While abs(document.documentElement.clientHeight - document.body.scrollHeight) >10
+		If document.documentElement.clientHeight < document.body.scrollHeight then
+			hght = hght + 10
+		else
+			hght = hght - 10
+		end if
+	
+		window.resizeTo 700,hght
+
+		Loop
+		
+	wdth = document.documentElement.clientWidth
+
+		Do While abs(document.documentElement.clientWidth - document.body.scrollWidth) >10
+		If document.documentElement.clientWidth < document.body.scrollWidth then
+			width = width + 14
+		else
+			width = width - 14
+		end if
+	
+		window.resizeTo width,hght
+
+		Loop
+		
+		Call Refresh()
+
+	End Function
+	'========================
+	window.resizeTo 750,165
+	screenWidth = document.parentwindow.screen.availwidth
+	screenHeight = document.parentwindow.screen.availheight
+	posLeft = (screenWidth - 700) / 2
+	posTop = (screenHeight - 600) / 2     
+	window.moveTo posLeft, posTop
+	
+	</script>
+	<!--Scripts to control app window size, position, and behavior (end)-->
+	<!--Features of app window (start)-->
+	<HTA:APPLICATION ID="AoBTool"
+	APPLICATIONNAME="AoBTool"
+	version="ver.2020.4.13"
+	CAPTION="yes"
+	BORDER="thin"
+	BORDERSTYLE="raised"
+	ICON="#"
+	CONTEXTMENU="yes"
+	MAXIMIZEBUTTON="no"
+	MINIMIZEBUTTON="yes"
+	NAVIGABLE="no"
+	SCROLL="no"
+	SCROLLFLAT="no"
+	SELECTION="no"
+	SHOWINTASKBAR="yes"
+	SINGLEINSTANCE="yes"
+	SYSMENU="yes"
+	WINDOWSTATE="normal">
+	</head>
+	<!--Features of app window (end)-->
+	<!--Script to control tab behavior (start)-->
+	<script language="VBscript"> 
+	Dim iPanelCount 
+	iPanelCount = 4
+
+	Public Sub Panel(tab) 
+
+	For i = 1 To iPanelCount 
+		If i = tab Then 
+			document.getElementById("tab" & i).className = "tabs tabsSelected" 
+			document.getElementById("panel" & i).style.display = "block" 
+		Else 
+			document.getElementById("tab" & i).className = "tabs tabsNotSelected" 
+			document.getElementById("panel" & i).style.display = "none" 
+		end if
+	Next 
+
+	call ResizeWindow()
+
+	End Sub 
+	</script>
+	<!--Script to control tab behavior (end)-->
+
+	<body> 
+	<table class="tableNorm" id="mainTable" align="center" border="0" cellpadding="0" cellspacing="0" width="650"> 
+		<tr> 
+			<td colspan="1"> 
+			<span class="tabs tabsSelected" id="tab1" onclick="panel(1)">AoBCompare™</span>
+			<span class="tabs tabsNotSelected" id="tab2" onclick="panel(2)">HexCalcTool™</span>
+			<span class="tabs tabsNotSelected" id="tab3" onclick="panel(3)">AoB/StringSwap™</span>
+			<span class="tabs tabsNotSelected" id="tab4" onclick="panel(4)">About</span>
+
+	<!--Code for each tab (buttons, text boxes, etc)-->
+	<div class="panel" id="panel1" style="display:block">
+		<br><H3><b><font color="darkred">AoB</font>Compare™</b></H3>
+		<span style="display:block;" id="aob_spn_aobcountArea">
+		<center><H3>How many AoB's would you like to compare?</H3>
+		<select name="seldd" id="seldd" onchange="aobBox()">
+			<option value="1">Select</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+		</select>
+		<br>
+		<br>                 
+		</center>
+		</span>
+		<span style="display:none;" id="aob_spn_wldCharArea"><center><H4>Wildcard: <input type="text" title="Note: This will be the only allowable wildcard." name="wldChar" id="wldChar" maxlength="1" value="?" size="1" style="text-align:center;"/></H4></center></span>
+		<span style="display:none;" id="aob_spn_WCArea"></span>
+		<span style="display:none;" id="aob_spn_DataArea"></span>
+		<span style="display:none;" id="aob_spn_RunArea"><br><center><button type="button" id="aob_run_btn" onClick="fixSpaces()">Compare!</button></center></span>
+		<span style="display:none;" id="aob_spn_ResetArea"><br><center><button type="button" id="aob_reset_btn" onClick="aobreset()">Reset</button></center><br></span>
+	</div>
+
+	<div class="panel" id="panel2" style="display:none">
+		<br><H3><b><font color="darkred">HexCalculator</font>Tool™</b></H3>
+		<center><span style="display:inline-block; width: 580;">
+			<table>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Start Address</label>
+						<center><input type="text" name="ofst_1" id="ofst_1" onkeyup="dispCalc()" maxlength="15" size="16"/>
+						<select name="selArth1" id="selArth1" onchange="dispCalc()">
+						<option value="Select">Select</option>
+						<option value="+">+</option>
+						<option value="-">-</option>
+						<option value="*">*</option>
+						<option value="/">/</option>
+						</select></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Offset 1</label>
+						<center><input type="text" name="ofst_2" id="ofst_2" onkeyup="dispCalc()" maxlength="15" size="16"/>
+						<select name="selArth2" id="selArth2" onchange="dispCalc()">
+						<option value="Select">Select</option>
+						<option value="+">+</option>
+						<option value="-">-</option>
+						<option value="*">*</option>
+						<option value="/">/</option>
+						</select></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Offset 2</label>
+						<center><input type="text" name="ofst_3" id="ofst_3" onkeyup="dispCalc()" maxlength="15" size="16"/>
+						<select name="selArth3" id="selArth3" onchange="dispCalc()">
+						<option value="Select">Select</option>
+						<option value="+">+</option>
+						<option value="-">-</option>
+						<option value="*">*</option>
+						<option value="/">/</option>
+						</select></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Offset 3</label>
+						<center><input type="text" name="ofst_4" id="ofst_4" onkeyup="dispCalc()" maxlength="15" size="16"/>
+						<select name="selArth4" id="selArth4" onchange="dispCalc()">
+						<option value="Select">Select</option>
+						<option value="+">+</option>
+						<option value="-">-</option>
+						<option value="*">*</option>
+						<option value="/">/</option>
+						</select></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Offset 4</label>
+						<center><input type="text" name="ofst_5" id="ofst_5" onkeyup="dispCalc()" maxlength="15" size="16"/>
+						<select name="selArth5" id="selArth5" onchange="dispCalc()">
+						<option value="Select">Select</option>
+						<option value="+">+</option>
+						<option value="-">-</option>
+						<option value="*">*</option>
+						<option value="/">/</option>
+						</select></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label style="padding-left:200px;">Offset 5</label>
+						<center><input style="margin-left: -78px;" type="text" name="ofst_6" id="ofst_6" onkeyup="dispCalc()" maxlength="15" size="16"/></center>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<center><label >Calculation Preview</label></center>
+						<input readonly style="text-align: center;" type="text" name="calc" id="calc" maxlength="100" size="80"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<center><label >Result</label></center>
+						<center><input readonly style="text-align: center;" type="text" name="end_addy" id="end_addy" maxlength="40" size="40"/></center>
+					</td>
+				</tr>
+			</table>
+			
+		</span></center>
+		<br><center><button type="button" id="ofst_run_btn" onClick="webhexcalc()">Run</button></center>
+		<br><center><button style="display:none" type="button" id="ofst_rst_btn" onClick="resetcalc()">Reset</button></center>
+		<center><span style="display:none;" id="ofst_WebMsgArea"></span></center>
+		<center><span style="display:none;" id="ofst_LocMsgArea"></span></center>
+	</div> 
+
+	<div class="panel" id="panel3" style="display:none">
+		<br><H3><b><font color="darkred">AoB/String</font>Swap™</b></H3>
+		<span style="display:inline-block;" id="strhex_spn_area">
+				<font style="vertical-align: middle; line-height: 15px;" size="2">
+				<label style="margin-left: 30px; vertical-align: middle;">Conversion Type(s):&nbsp;</label>
+				<label style="vertical-align: middle; font-weight: bold" id="h2slabel" for="one">Hex to String</label>
+				<input style="vertical-align: middle;" onchange="CheckRadio1()" type="radio" checked="true" id="h2s" name="h2s" value="h2s" />
+				<label style="vertical-align: middle;" id="s2hlabel" for="two">String to Hex</label>
+				<input style="vertical-align: middle;" onchange="CheckRadio2()" type="radio" id="s2h" name="s2h" value="s2h" /></font><br><br>
+			
+			<span  style="display:inline-block;" id="hex_spn_area">
+				<fieldset>
+				<Legend><b>Enter AoB</b></legend>
+					<table width='100%'>
+						<tr>
+							<td><textarea style="width:540px;height:100px;" onchange"checknohex()" onkeyup="checknohex()" name="hexInput" id="hexInput"></textarea>
+							<br><br>
+							<button type="button" id="hex2str_run_btn" onClick="hex2strGO()">Convert</button>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+			</span>
+			
+			<span style="display:none;" id="str_spn_area">
+				<fieldset>
+				<Legend><b>Enter String</b></legend>
+					<table width='100%'>
+						<tr>
+							<td><textarea style="width:540px;height:100px;" name="strInput" id="strInput"></textarea>
+							<br><br>
+							<button type="button" id="str2hex_run_btn" onClick="str2hexGO()">Convert</button>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+			</span>
+			
+			<br><br><br>
+			
+			<span id="aob2strResult_spn_area"><br>
+				<span style="display:none" id="chkboxRslt_spn_area">
+					<input style="float:left;" type="checkbox" name="0xCheckBox" id="0xCheckBox" onchange="str2hexGO()" title="Prefix Result with 0x"></input>
+					<font style="float:left;" size="2" onclick="chkstr2hexGO()">Prefix resulting bytes with 0x</font>
+				</span>
+				<br>
+				<span style="display:none" id="chkboxRslt_spn_area1">
+					<input style="float:left;" type="checkbox" name="xCheckBox" id="xCheckBox" onchange="str2hexGO1()" title="Prefix Result with x"></input>
+					<font style="float:left;" size="2" onclick="chkstr2hexGO1()">Prefix resulting bytes with x</font>
+				</span>
+				
+				<fieldset>
+				<Legend><b>Result</b></legend>
+					<table width='100%'>
+						<tr>
+							<td><textarea readonly style='width:540px;height:100px;' name="rsltOutput" id="rsltOutput" rows=5></textarea></td>
+						</tr>
+					</table>
+				</fieldset>
+				<br>
+				<center><span id="showByteCount" style="display:none;"></span></center>
+			</span>
+			<br><br><br><br><br>
+		</span>
+	</div> 
+	
+	<div class="panel" id="panel4" style="display:none">
+		<br><H4><b>Origin Story</b></H4>
+		<span style="display:inline-block; width: 580;">
+			<p><font class="info1">This tool is intended for use with <a href="http://www.cheatengine.org/" style="color:blue;text-decoration:none">Cheat Engine</a>'s array of bytes scanner.<br><br>Developed by <b><a href="https://www.youtube.com/c/Postposterous?sub_confirmation=1" style="color:blue;text-decoration:none">Postposterous</a> (YouTube Channel)</b><br><a href="?Discord Server: https://discord.gg/36QVSFP" style="color:blue;text-decoration:none">Discord Invite</a>: Postposterous#3796<br><br>
+			Inspired by the original VBScript tool created by:<b><a href="http://forum.cheatengine.org/profile.php?mode=viewprofile&u=338952" style="color:blue;text-decoration:none" alt="AikonCWD's Profile""><img src="http://i.imgur.com/f6rnuaV.gif" alt="AikonCWD's Profile" width="20" height="20" border="0" style="vertical-align: middle;"/>AikonCWD<img src="http://i.imgur.com/f6rnuaV.gif" alt="AikonCWD's Profile" width="20" height="20" border="0" style="vertical-align: middle;"/></a></b><br>Found here: <a href="http://forum.cheatengine.org/viewtopic.php?t=572933" style="color:blue;text-decoration:none">[TOOL] AoB Pattern Generator (coded in VBS, OpenSource)</a><br><br>
+			<a href="https://drive.google.com/open?id=0B7UqN53jp_4cMEEzT1h1N0ozdVU" style="color:blue;text-decoration:none">AoBTool™</a> shared in the following forums: <a href="http://forum.cheatengine.org/viewtopic.php?t=604665"><img src="https://forum.cheatengine.org/templates/subSilver/images/logo_phpBB.gif" alt="Cheat Engine Forums" width="50" height="50" border="0" style="vertical-align: middle;"/></a><a href="https://www.reddit.com/r/cheatengine/comments/6e8s81/release_aob_tool_for_comparing_and_adding/"><img src="https://assets.ifttt.com/images/channels/1352860597/icons/on_color_large.png" alt="/r/cheatengine" width="50" height="50" border="0" style="vertical-align: middle;"/></a><a href="http://fearlessrevolution.com/viewtopic.php?f=8&t=2790" style="color:blue;text-decoration:none">Fearless Revolution</a></font></p>
+		</span>
+	</div> 
+
+			</td> 
+		</tr> 
+	</table> 
+	</body> 
+	</html>
+
+	<script language="VBScript">
+	'Set Global Variables
+	Dim newW
+	Dim wldChar
+	Dim T
+
+	</script>
+
+	<!--Begin scripts for 1st tab -->
+	<script language="VBScript">
+	Sub aob_Convert(T)
+
+	'Original script created by AikonCWD.  Modified by Drivium.
+
+	wldChar = document.getElementByID("wldChar").value
+
+	AoB = Split(T, vbcrlf) 
+
+	F = "" 
+	X = 0 
+	For i = 1 To Len(AoB(0)) 
+		For u = 1 To UBound(AoB) 
+			If Mid(AoB(u), i, 1) <> Mid(AoB(0), i, 1) Then 
+				F = F & "?"
+				X = 1
+				Exit For 
+			End If 
+		Next 
+		If X <> 1 Then F = F & Mid(AoB(0), i, 1) 
+			X = 0
+	Next 
+
+	Set re = new regexp
+	oldF = F
+	re.Pattern = "([\?]\w)|(\w[\?])"
+	re.Global = True
+	newF = re.Replace(oldF, "??")
+	newWC = replace(newF, "?", wldChar)
+	newW = len(newWC) - len(replace(newWC, wldChar, ""))
+
+	'=====================================================================
+	'Fix spaces in AoB result
+
+		newString = lcase(replace(newWC," ",""))
+
+		Set r = New RegExp
+		r.Global = True
+		r.Pattern = "(.{2})"
+
+		document.getElementById("aobresult").value = trim(r.Replace(ucase(newString), "$1 "))
+
+	'=====================================================================
+
+	call showWildcardStat()
+
+	document.ParentWindow.ClipboardData.SetData "text", newWC
+
+	'Alert "Result Copied to Clipboard!"
+
+	end sub
+	</script>
+
+	<!--'============================================================================================================-->
+	<!-- Subs and Functions (start)-->
+	<script language="VBScript">
+	'Triggers screen updates in an HTA...
+	Sub Refresh 
+	With CreateObject("WScript.Shell")  
+		.run "%comspec% /c echo something & exit", 0, true  
+	End With  
+	End Sub 
+	'===================================
+	Function showWildcardStat()
+
+	if document.getElementById("aobresult").value = "" then
+		aob_spn_WCArea.style.display = "none"
+	else
+		aob_spn_WCArea.style.display = "block"
+		aob_spn_wldCharArea.style.display = "none"
+		aob_spn_WCArea.InnerHTML = "<br><center><H4><b>Bytes Replaced: " & round(newW/2,0) & "</b></H4></center>"
+		aob_spn_RunArea.style.display = "none"
+		aob_spn_ResetArea.style.display = "block"
+		call ResizeWindow()
+	end if
+
+	end function
+	'============================
+	Function aobBox()
+
+	aob_spn_wldCharArea.style.display = "block"
+
+	if document.getElementById("seldd").value = "1" then
+
+		exit function
+
+	else
+
+		boxsize = document.getElementById("seldd").value
+
+	end if
+
+	aobBoxStart =   "<fieldset>" & _
+					"<Legend>ver.2020.4.13</legend>" & vbcrlf
+
+		for i = 1 to document.getElementById("seldd").value                          
+
+			box =   box & "<b>AoB " & i & "</b>" & _
+							"<table width='100%'>" & _
+								"<tr>" & _
+									"<td><textarea style='width:100%' name='aob" & i & "' rows=" & 18/boxsize & " id='aobtextbox" & i & "' onkeyup='btnDisplay()'></textarea></td>" & _
+								"</tr>" & _
+							"</table>" & vbcrlf
+
+		next
+
+	aobBoxEnd = "<br><b>Result</b>" & _
+			"<br>" & _
+			"<span style='display:none' id='chkboxRslt_spn_0xaobarea'>" & _
+				"<input style='float:left;' type='checkbox' name='aob0xCheckBox' id='aob0xCheckBox' onchange='aob0xprefixGO()' title='Prefix Result with 0x'></input>" & _
+				"<font style='float:left;' size='2' onclick='chk0xaobprefixGO()'>Prefix resulting bytes with 0x</font>" & _
+			"</span>" & _
+			"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" & _
+			"<span style='display:none' id='chkboxRslt_spn_xaobarea'>" & _
+				"<input style='float:left;' type='checkbox' name='aobxCheckBox' id='aobxCheckBox' onchange='aobxprefixGO()' title='Prefix Result with x'></input>" & _
+				"<font style='float:left;' size='2' onclick='chkxaobprefixGO()'>Prefix resulting bytes with x</font>" & _
+			"</span>" & _
+			"<br>" & _
+			"<table width='100%'>" & _
+				"<tr>" & _
+					"<td><textarea readonly style='width:100%' name='result' rows=5 id='aobresult'></textarea></td>" & _
+				"</tr>" & _
+			"</table>" & _
+			"</fieldset>"
+
+	aob_spn_ResetArea.style.display = "block"
+	aob_spn_aobcountArea.style.display = "none"
+	aob_spn_DataArea.style.display = "block"
+	aob_spn_DataArea.InnerHTML = aobBoxStart & box & aobBoxEnd
+	chkboxRslt_spn_0xaobarea.style.display = "inline-block"
+	chkboxRslt_spn_xaobarea.style.display = "inline-block"
+
+	call ResizeWindow()
+
+	end function
+	'============================
+	Function aobreset()
+
+	for i = 1 to document.getElementById("seldd").value
+		if not document.getElementById("aobtextbox" & i) is nothing then
+			document.getElementById("aobtextbox" & i).value = ""
+		end if
+
+	next      
+
+		document.getElementById("aobresult").value = ""
+		document.getElementByID("wldChar").value = "?"
+		aob_spn_wldCharArea.style.display = "none"
+		aob_spn_RunArea.style.display = "none"
+		aob_spn_WCArea.style.display = "none"
+		aob_spn_ResetArea.style.display = "none"
+		aob_spn_DataArea.style.display = "none"
+		chkboxRslt_spn_0xaobarea.style.display = "none"
+		chkboxRslt_spn_xaobarea.style.display = "none"
+		aob_spn_aobcountArea.style.display = "block"
+		document.getElementById("seldd").value = "1"
+		call ResizeWindow()
+
+	end function
+	'============================
+	Function btnDisplay()
+
+	nullCount = 0
+
+	for i = 1 to document.getElementById("seldd").value
+		if document.getElementById("aobtextbox" & i).value = "" then
+			nullCount = nullCount + 1
+		end if
+	next
+
+	if nullCount = 0 then
+		aob_spn_RunArea.style.display = "block"
+		aob_spn_ResetArea.style.display = "none"
+		call ResizeWindow()
+
+	else
+
+		document.getElementById("aobresult").value = ""
+		aob_spn_RunArea.style.display = "none"
+		aob_spn_ResetArea.style.display = "block"
+		call ResizeWindow()
+	end if
+
+	end function
+	'============================
+	Function fixSpaces()
+
+	document.getelementbyid("aob0xCheckBox").checked = false
+	document.getelementbyid("aobxCheckBox").checked = false
+	
+	for ii = 1 to document.getElementById("seldd").value
+
+		newString = lcase(replace(document.getElementById("aobtextbox" & ii).value," ",""))
+
+		Set r = New RegExp
+		r.Global = True
+		r.Pattern = "(.{2})"
+
+		'document.getElementById("aobtextbox" & ii).value = trim(r.Replace(newString, "$1 "))
+
+		remLineBrks = replace(newString,vbcrlf,"")
+		remSpaces = trim(r.Replace(remLineBrks, "$1 "))
+	
+		document.getElementById("aobtextbox" & ii).value = remSpaces
+		
+	next
+
+	call mergeAOB()
+
+	end function
+	'============================
+	Function mergeAOB()
+
+	T = document.getElementById("aobtextbox1").value
+	for ii = 2 to document.getElementById("seldd").value
+		if  not document.getElementById("aobtextbox" & ii) is nothing then
+			if document.getElementById("aobtextbox" & ii).value <> "" then 
+				T = T & vbcrlf & document.getElementById("aobtextbox" & ii).value
+			end if
+		end if
+	next
+		
+	call valChar(T)
+
+	end function
+	'============================
+	Function valChar(C)
+
+	'Validate wild card characters
+
+	Set objRegEx1 = New RegExp
+	objRegEx1.IgnoreCase = True
+	objRegEx1.Global = True
+	wcPat = "[a-f0-9 ]"
+	objRegEx1.Pattern = wcPat
+
+	wldChar = document.getElementByID("wldChar").value
+
+	Set colMatches1 = objRegEx1.Execute(wldChar)
+
+	If colMatches1.Count > 0 Then
+		For Each strMatch1 in colMatches1
+			errMatch1 = strMatch1.Value
+		Next
+
+		If errMatch1 = " " then
+			alert "Ok, technically a space is a non-Hexadecimal character - so you're on the right track, but using a space causes other issues in this tool.  Please enter a non-Hexadecimal character (that's also not a space!)"
+			document.getElementByID("wldChar").value = "?"
+			exit function
+		else
+			alert chr(34) & errMatch1 & chr(34) & " is a Hexadecimal character.  Please enter a non-Hexadecimal character as your wildcard."
+			document.getElementByID("wldChar").value = "?"
+			exit function
+		end if
+	end if
+
+	'-------------------------------------
+	'Validate AoB box characters
+	Set objRegEx = New RegExp
+	objRegEx.IgnoreCase = True
+	objRegEx.Global = True
+	newPat = "[^\?a-f0-9\s]"
+	objRegEx.Pattern = replace(newPat,"?",wldChar)
+
+	strSearchString = C
+
+	Set colMatches = objRegEx.Execute(strSearchString)
+
+	If colMatches.Count > 0 Then
+		
+		For Each strMatch in colMatches
+			errMatch = errMatch & strMatch.Value
+		Next
+
+		Set oCol = CreateObject("Scripting.Dictionary")
+		lCount = Len(errMatch)
+
+		For lCtr = 1 To lCount
+			sChar = Mid(errMatch, lCtr, 1)
+			On Error Resume Next
+			oCol.Add sChar, sChar
+			If Err.Number = 0 Then sAns = sAns & sChar
+				Err.Clear
+				xChar = xChar & sChar & vbcrlf
+		Next                 
+
+			uniChar = split(xChar,vbcrlf)
+
+		For iVal = 1 to document.getElementById("seldd").value
+
+			For i = 0 to ubound(uniChar)-1
+
+				if instr(document.getElementById("aobtextbox" & iVal).value,uniChar(i)) then
+					missingAoB = missingAoB & "AoB " & iVal & vbcrlf
+					exit for
+					'clearlist = clearlist & "," & iVal
+				end if
+
+			Next
+
+		Next
+
+		For iii = 1 To Len(sAns)
+			if Len(sAns) = 1 then
+				badList = sAns
+			elseif iii < Len(sAns) and Len(sAns) > 1 then
+				badList = badList & replace(Mid(sAns,iii,1),Mid(sAns,iii,1),Mid(sAns,iii,1) & ", ")
+			elseif iii = Len(sAns) and Len(sAns) > 1 then
+				badList = badList & " and " & Mid(sAns,iii,1)
+			end if
+		next
+
+		Alert "Non-hexadecimal character(s) [" & badList & "] found in: " & vbcrlf & missingAoB & vbcrlf & "Note: The chosen wilcard " & chr(34) & document.getElementByID("wldChar").value & chr(34) & " is the only acceptable non-hexadecimal character for this session."
+
+		remBadCharMsg = msgbox("Would you like AoBTool™ to remove these for you?",4,"Remove Invalid Characters?")
+
+		if remBadCharMsg = vbYes then
+			For ii = 1 to document.getElementById("seldd").value
+				For iiii = 1 To Len(sAns)
+					if instr(document.getElementById("aobtextbox" & ii).value,Mid(sAns,iiii,1)) then
+						remBadChars = replace(document.getElementById("aobtextbox" & ii).value,Mid(sAns,iiii,1)," ")
+						document.getElementById("aobtextbox" & ii).value = remBadChars
+						document.getElementById("aobtextbox" & ii).value = trim(document.getElementById("aobtextbox" & ii).value)
+					End If
+				Next
+			Next
+			call fixSpaces()
+		end if
+
+	else
+
+		call aob_Convert(C)
+
+	end if
+
+	end function
+	
+	'==========================================
+	function resetcalc()
+	
+	for i = 1 to 6
+		document.getElementByID("ofst_"&i).value = ""
+	next
+	
+	for i = 1 to 5
+		document.getElementByID("selArth"&i).value = "Select"
+	next
+	
+	document.getElementByID("end_addy").value = ""
+	
+	ofst_rst_btn.style.display = "none"
+	
+	document.getElementByID("calc").value  = ""
+	
+	call ResizeWindow()
+	
+	end function
+	'==========================================
+	'Display calculation
+	
+	function dispCalc()
+	
+	'----Get offset values
+
+	if document.getElementByID("ofst_1").value <> "" then
+		ofst1 = "0x" & document.getElementByID("ofst_1").value
+	end if
+	
+	if document.getElementByID("ofst_2").value <> "" then
+		ofst2 = "0x" & document.getElementByID("ofst_2").value
+	end if
+	
+	if document.getElementByID("ofst_3").value <> "" then
+		ofst3 = "0x" & document.getElementByID("ofst_3").value
+	end if
+	
+	if document.getElementByID("ofst_4").value <> "" then
+		ofst4 = "0x" & document.getElementByID("ofst_4").value
+	end if
+	
+	if document.getElementByID("ofst_5").value <> "" then
+		ofst5 = "0x" & document.getElementByID("ofst_5").value
+	end if
+	
+	if document.getElementByID("ofst_6").value <> "" then
+		ofst6 = "0x" & document.getElementByID("ofst_6").value
+	end if
+	
+	'----Get arth values
+	if document.getElementByID("selArth1").value <> "Select" then
+		arth1 = document.getElementByID("selArth1").value
+	end if
+	
+	if document.getElementByID("selArth2").value <> "Select" then
+		arth2 = document.getElementByID("selArth2").value
+	end if
+	
+	if document.getElementByID("selArth3").value <> "Select" then
+		arth3 = document.getElementByID("selArth3").value
+	end if
+	
+	if document.getElementByID("selArth4").value <> "Select" then
+		arth4 = document.getElementByID("selArth4").value
+	end if
+	
+	if document.getElementByID("selArth5").value <> "Select" then
+		arth5 = document.getElementByID("selArth5").value
+	end if
+	
+	calcPend = ofst1 & arth1 & ofst2 & arth2 & ofst3 & arth3 & ofst4 & arth4 & ofst5 & arth5 & ofst6
+	
+	document.getElementByID("calc").value  = calcPend 
+	
+	Call Refresh()
+	
+	end function
+	
+	'==========================================
+	function webhexcalc()
+
+	document.getElementByID("end_addy").value = ""
+	ofst_rst_btn.style.display = "block"
+
+	'-------------------
+	'Hex Validation
+
+	Set objRegEx = New RegExp
+	objRegEx.IgnoreCase = True
+	objRegEx.Global = True
+	hexPat = "[^a-f0-9]"
+	objRegEx.Pattern = hexPat
+
+	for i = 1 to 6
+	
+		hexVal = document.getElementByID("ofst_"&i).value
+	
+		Set colMatches = objRegEx.Execute(hexVal)
+	
+		If colMatches.Count > 0 Then
+			For Each strMatch in colMatches
+				errMatch = strMatch.Value
+			Next
+	
+			alert chr(34) & errMatch & chr(34) & " is not a Hexadecimal character." & vbcrlf & vbcrlf & "Only Hexadecimal characters can be calculated."
+			document.getElementByID("ofst_"&i).value = ""
+			call dispCalc()
+			exit function
+		end if
+		
+	next
+	
+	'-------------------
+	
+	timeOutMsg = "<center>There was a problem retrieving results...<br>Try again!</center>"
+	
+	ofst_WebMsgArea.style.display = "block"
+	document.getElementByID("ofst_WebMsgArea").innerHtml = "<br>Calculating...<br><br>"
+	call ResizeWindow()
+		
+	arthInput = document.getElementByID("calc").value
+	limit = second(Now())
+							
+	on error resume next
+	Set IE = CreateObject("internetexplorer.application")
+	IE.Visible = false
+	IE.Navigate "https://defuse.ca/big-number-calculator.htm"
+	Do While (IE.Busy or IE.ReadyState <> 4) and abs(second(Now())-limit) <= 20:ccSleep(0.25):Loop
+		For Each input1 in ie.document.GetElementsByTagName("input")
+			if input1.name = "eqn" and not ie.document.GetElementsByTagName("input") is nothing then
+				input1.value = arthInput
+				elseif abs(second(Now())-limit) >=20 then
+				document.getElementByID("ofst_WebMsgArea").innerHtml = "Having trouble retrieving web results...<br>Please try again!"
+				document.getElementByID("end_addy").value = ""
+				ie.quit
+				exit function
+			end if
+		Next
+		
+		For Each nme In ie.document.getelementsbytagname("select")
+			if nme.getAttribute("name") = "base" then
+				for each opt in nme.options
+					If opt.Value = "hex" Then
+						opt.Selected = True
+					Else
+						opt.Selected = False
+					End If
+				next
+			elseif abs(second(Now())-limit) >=20 then
+				document.getElementByID("ofst_WebMsgArea").innerHtml = "Having trouble retrieving web results...<br>Please try again!"
+				document.getElementByID("end_addy").value = ""
+				ie.quit
+				exit function
+			end if
+		Next
+		
+		For Each chk in ie.document.GetElementsByTagName("input")
+			if chk.name = "addspaces" then
+				chk.click
+			elseif abs(second(Now())-limit) >=20 then
+				document.getElementByID("ofst_WebMsgArea").innerHtml = "Having trouble retrieving web results...<br>Please try again!"
+				document.getElementByID("end_addy").value = ""
+				ie.quit
+				exit function
+			end if
+		Next
+				
+		For Each btn in ie.document.GetElementsByTagName("input")
+			if btn.name = "submit" then
+				btn.click
+			end if
+		Next
+		
+		Do While (IE.Busy or IE.ReadyState <> 4) and abs(second(Now())-limit) <= 20:ccSleep(0.25):Loop
+			hexResult = ie.document.getelementbyid("bignumber").innertext
+		
+	on error goto 0
+
+	if instr(hexResult,"Sorry") then
+		document.getElementByID("end_addy").value = "Invalid Calculation.  Please try again!"
+	else
+		document.getElementByID("end_addy").value = hexResult
+	end if
+		
+		ofst_WebMsgArea.style.display = "none"
+		
+		call ResizeWindow()
+	
+		ie.quit
+
+end function
+	'==========================================
+
+	Sub ccSleep(seconds)
+	 set oShell = CreateObject("Wscript.Shell")
+	cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
+	oShell.Run cmd,0,1
+	 End Sub
+	 
+	'==========================================
+	Function str2hexGO()
+	
+	If document.getelementbyid("strInput").value <> "" then
+	
+		strString = document.getelementbyid("strInput").value
+		document.getelementbyid("strInput").value = strString
+		
+		For i=1 To Len(strString)
+			if not i = Len(strString) then
+				strHex = strHex + Hex(Asc(Mid(strString,i,1))) & " "
+			else 
+				strHex = strHex + Hex(Asc(Mid(strString,i,1)))
+			end if
+		Next
+	
+		If document.getelementbyid("0xCheckBox").checked = false then
+			document.getelementbyid("rsltOutput").value = strHex
+		else 
+			strHex = replace(strHex,strHex,"0x" & strHex)
+			strHex = replace(strHex," "," 0x")
+			document.getelementbyid("rsltOutput").value = strHex
+		end if
+		
+		cntBytes = split(strHex," ")
+		bytes = ubound(cntBytes)
+		
+			ByteCnt = "<h3>(Result is <b>"&bytes+1&"</b> Bytes)</h3><br>"
+			
+		showByteCount.style.display = "inline-block"
+		showByteCount.innerHTML = ByteCnt
+		
+		Call Refresh()
+	
+	end if
+	
+	end function
+	
+	'==========================================
+	function chkstr2hexGO()
+	
+	if document.getelementbyid("0xCheckBox").checked = false then
+		document.getelementbyid("0xCheckBox").checked = true
+	else
+		document.getelementbyid("0xCheckBox").checked = false
+		
+	end if
+	
+	str2hexGO()
+		
+	end function
+	'==========================================
+	
+	Function str2hexGO1()
+	
+	If document.getelementbyid("strInput").value <> "" then
+	
+		strString = document.getelementbyid("strInput").value
+		document.getelementbyid("strInput").value = strString
+		
+		For i=1 To Len(strString)
+			if not i = Len(strString) then
+				strHex = strHex + Hex(Asc(Mid(strString,i,1))) & " "
+			else 
+				strHex = strHex + Hex(Asc(Mid(strString,i,1)))
+			end if
+		Next
+	
+		If document.getelementbyid("xCheckBox").checked = false then
+			document.getelementbyid("rsltOutput").value = strHex
+		else 
+			strHex = replace(strHex,strHex,"x" & strHex)
+			strHex = replace(strHex," "," x")
+			document.getelementbyid("rsltOutput").value = strHex
+		end if
+		
+		cntBytes = split(strHex," ")
+		bytes = ubound(cntBytes)
+		
+			ByteCnt = "<h3>(Result is <b>"&bytes+1&"</b> Bytes)</h3><br>"
+			
+		showByteCount.style.display = "inline-block"
+		showByteCount.innerHTML = ByteCnt
+		
+		Call Refresh()
+	
+	end if
+	
+	end function
+	
+	'==========================================
+	function chkstr2hexGO1()
+	
+	if document.getelementbyid("xCheckBox").checked = false then
+		document.getelementbyid("xCheckBox").checked = true
+	else
+		document.getelementbyid("xCheckBox").checked = false
+		
+	end if
+	
+	str2hexGO1()
+		
+	end function
+	'==========================================
+	Function hex2strGO()
+
+	If document.getelementbyid("hexInput").value <> "" then
+		strHex = replace(document.getelementbyid("hexInput").value," ","")
+	
+		For I = 1 To Len(strHex) Step 2 
+			strString = strString & Chr(Eval("&H" & Mid(strHex, I, 2))) 
+		Next 
+	
+		document.getelementbyid("rsltOutput").value = strString
+		
+		Call Refresh()
+		
+	end if
+	
+	end function
+	
+	'==========================================
+	function chk0xaobprefixGO()
+		
+	if document.getelementbyid("aob0xCheckBox").checked = false then
+		document.getelementbyid("aob0xCheckBox").checked = true
+	else
+		document.getelementbyid("aob0xCheckBox").checked = false
+	end if
+		
+	aob0xprefixGO()
+		
+	end function
+	
+	'==========================================
+	
+	Function aob0xprefixGO()
+	
+	call mergeAOB()
+	
+	document.getelementbyid("aobxCheckBox").checked = false
+	
+	If document.getelementbyid("aobresult").value <> "" then
+	
+		strString = document.getelementbyid("aobresult").value
+	
+		If document.getelementbyid("aob0xCheckBox").checked = false then
+			call mergeAOB()
+		else 
+
+			strHex = replace(strString," "," 0x")
+			strHex = replace(strHex,strHex,"0x" & strHex)
+			document.getelementbyid("aobresult").value = strHex
+		end if
+				
+		Call Refresh()
+			
+	end if
+	
+	document.ParentWindow.ClipboardData.SetData "text", document.getelementbyid("aobresult").value
+	
+	end function
+	
+'================================================
+	function chkxaobprefixGO()
+		
+	if document.getelementbyid("aobxCheckBox").checked = false then
+		document.getelementbyid("aobxCheckBox").checked = true
+	else
+		document.getelementbyid("aobxCheckBox").checked = false
+		
+	end if
+		
+	aobxprefixGO()
+		
+	end function
+	
+'==========================================
+	
+	Function aobxprefixGO()
+	
+	call mergeAOB()
+	
+	document.getelementbyid("aob0xCheckBox").checked = false
+		
+	If document.getelementbyid("aobresult").value <> "" then
+	
+		strString = document.getelementbyid("aobresult").value
+	
+		
+		If document.getelementbyid("aobxCheckBox").checked = false then
+			call mergeAOB()
+		else 
+
+			strHex = replace(strString," "," x")
+			strHex = replace(strHex,strHex,"x" & strHex)
+			document.getelementbyid("aobresult").value = strHex
+		end if
+				
+		Call Refresh()
+	
+	end if
+	
+		document.ParentWindow.ClipboardData.SetData "text", document.getelementbyid("aobresult").value
+	
+	end function
+	
+'================================================
+
+	function checknohex()
+	
+	strHex = document.getelementbyid("hexInput").value
+	
+	'Validate AoB box characters
+	Set objRegEx = New RegExp
+	objRegEx.IgnoreCase = True
+	objRegEx.Global = True
+	newPat = "[^\?a-f0-9\s]"
+	objRegEx.Pattern = replace(newPat,"?",wldChar)
+
+	Set colMatches = objRegEx.Execute(strHex)
+
+	If colMatches.Count > 0 Then
+		
+		For Each strMatch in colMatches
+			errMatch = errMatch & strMatch.Value
+			alert("Non-hexadecimal character(s) found in AoB area. Fix and retry.")
+			exit function
+		Next
+				
+	end if
+	
+	end function
+	'==========================================
+	
+'Radio Check
+function CheckRadio1()
+
+if h2s.checked = true then
+	hex_spn_area.style.display = "inline-block"
+	h2slabel.style.fontweight = "bold"
+	s2h.checked = false
+	str_spn_area.style.display = "none"
+	s2hlabel.style.fontweight = "lighter"
+	showByteCount.style.display = "none"
+	showByteCount.innerHTML = ""
+	document.getelementbyid("rsltOutput").value = ""
+	chkboxRslt_spn_area.style.display = "none"
+	chkboxRslt_spn_area1.style.display = "none"
+end if
+
+	Call Refresh()
+	
+end function
+
+function CheckRadio2()
+
+	Call Refresh()
+
+if s2h.checked = true then
+	str_spn_area.style.display = "inline-block"
+	s2hlabel.style.fontweight = "bold"
+	h2s.checked = false
+	hex_spn_area.style.display = "none"
+	h2slabel.style.fontweight = "lighter"
+	document.getelementbyid("rsltOutput").value = ""
+	chkboxRslt_spn_area.style.display = "inline-block"
+	chkboxRslt_spn_area1.style.display = "inline-block"
+end if
+
+	Call Refresh()
+	
+end function
+
+	</script>
+
+	<!-- Subs and Functions (End)-->

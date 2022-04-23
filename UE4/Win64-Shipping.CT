@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>25330</ID>
+      <Description>"UE4"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+function StaticFindObject(name)
+local mem=allocateMemory(0x100)
+writeString(mem,name,true)
+local address=executeCodeEx(0, nil, getAddress('StaticFindObject'), getAddress('CoreUObject'), 0, mem, 0)
+deAlloc(mem)
+if not address then error(name..' could not be found...')end
+return string.format('%X',address)
+end
+
+function GetFullName(object,includeparent)
+local mem=allocateMemory(0x100)
+local str1,str2
+executeCodeEx(0, nil, getAddress('GetFullName'), object, mem)
+str1=readPointer(mem)
+if str1 then str1=readString(str1,readInteger(mem+0x8)*2,true) end
+if includeparent then
+   local parent=readPointer(object+parentOffset)
+   if parent then
+      executeCodeEx(0, nil, getAddress('GetFullName'), parent, mem+0x50)
+      str2=readPointer(mem+0x50)
+      if str2 then str2=readString(str2,readInteger(mem+0x58)*2,true) end
+      deAlloc(mem)
+      return str1..' ~ '..str2
+   end
+end
+deAlloc(mem)
+return str1
+end
+
+function GetFullNameSafe(object)
+local mem=allocateMemory(0x100)
+executeCodeEx(0, nil, getAddress('GetFullNameSafe'),mem, object)
+local str=readPointer(mem)
+if str then str=readString(str,readInteger(mem+0x8)*2,true) end
+deAlloc(mem)
+return str
+end
+
+function FNameString(FName)
+local mem=allocateMemory(0x100)
+executeCodeEx(0, nil, getAddress('FNameString'),FName, mem)
+local str=readPointer(mem)
+if str then str=readString(str,readInteger(mem+0x8)*2,true) end
+deAlloc(mem)
+return str
+end
+
+
+function isStructExist(name)
+for i=0,getStructureCount()-1 do
+if(getStructure(i).getName()==name)then return getStructure(i) end
+end
+return false
+end
+
+function deletestruct(name)
+local count=getStructureCount()
+local structure
+for i=0,count-1 do
+structure=getStructure(i)
+if(structure.getName()==name)then structure.removeFromGlobalStructureList() break end
+end end
+
+function ChildStructStart(structname,elementname)
+local struct=isStructExist(structname)
+if struct then
+for i=0,struct.Count-1 do
+if struct.Element[i].Name==elementname then return struct.Element[i].ChildStructStart end end
+else return nil end
+end
+
+function findAddress(name,number,AddressOrAOBString,modulename,stopaddress,Nth,aobscanOnly,gethead,nop)
+	local size,address=0x100
+    AddressOrAOBString,address=string.lower(AddressOrAOBString):gsub('banana','')
+	if(address&gt;0)then
+		local f
+		if(modulename==0 or modulename==nil or modulename=='')then f=AOBScan(AddressOrAOBString)
+		else
+			local ms = createMemScan()
+			if(stopaddress==0 or stopaddress==nil or stopaddress=='')then
+				stopaddress=getNameFromAddress(modulename,true,false)
+                if(stopaddress:find("+")~=nil)then stopaddress=stopaddress:sub(0,stopaddress:find("+")-1)end
+				if(getModuleSize(stopaddress)==nil)then error('Module '..modulename..' not found') end
+                modulename=getAddress(stopaddress)
+				stopaddress=modulename+getModuleSize(stopaddress)
+			end
+			ms.firstScan(soExactValue,vtByteArray,rtTruncated,AddressOrAOBString,'',getAddress(modulename),getAddress(stopaddress),'',fsmNotAligned,'',true,false,false,false)
+			ms.waitTillDone()
+			f = createFoundList(ms)
+			f.initialize()
+			ms.destroy()
+		end
+		address={}
+		for i=0,f.Count-1 do address[i+1]=f[i]end
+		f.destroy()
+        if Nth==nil or Nth==0 or Nth=='' then Nth=1 end
+        if gethead then
+           local addresss=GetAddressSafe(address[Nth])
+           if addresss and addresss~=0 then
+           for i=0,0x1000 do
+               addresss=addresss-1
+               if readBytes(addresss,1)==0xCC then break end
+               if nop then local ext, opc, byt, add=splitDisassembledString(disassemble(addresss)) if string.find(opc,'nop') then addresss=addresss+getInstructionSize(addresss)-1 break end end
+           end
+           address[Nth]=addresss+1 end
+        end
+		if number==nil or number==0 or number=='' then
+			if aobscanOnly then return address end
+		else
+            if(#address==0)then error(name..' aob no result found') end
+            if(getAddress(address[Nth])==nil)then error(name..' aob result '..Nth..' doesnt exist') end
+            unregisterSymbol(name)
+            registerSymbol(name,getAddressSafe(address[Nth]),true)
+            if aobscanOnly then return end
+		end
+		AddressOrAOBString=GetAddressSafe(address[Nth])
+	end
+    AddressOrAOBString=getAddressSafe(AddressOrAOBString)
+	if(AddressOrAOBString==nil)then error(name..' still cant be found')end
+	local addr={}
+	local i=0
+	local j=1
+	while(i&lt;size) do
+		local ext, opc, byt, add=splitDisassembledString(disassemble(getAddressSafe(AddressOrAOBString)+i))
+		if(ext~="")then
+			if(opc:find(",")~=nil)then
+				opc=opc:sub(opc:find(",")+1,opc:len())
+			else
+				opc=opc:sub(opc:find(" ")+1,opc:len())
+			end
+			addr[j]=opc:gsub("%[",""):gsub("]","") j=j+1
+		end
+		i=i+getInstructionSize(AddressOrAOBString+i)
+	end
+    --for i=1,#addr do print(addr[i]) end
+	if number==nil or number==0 or number=='' then return addr end
+	local offset
+	if(type(number)==type(''))then
+		offset=string.find(number,',')
+		if(offset==nil)then number=getAddress(number)
+		else offset=getAddress(string.sub(number,offset+1,number:len()))
+			number=getAddress(string.sub(number,1,string.find(number,',')-1))
+		end
+	end
+	if offset==nil then offset=0 end
+	unregisterSymbol(name)
+	registerSymbol(name,getAddressSafe(addr[number])-offset,true)
+end
+
+function ue4versioncheck()
+local fileversion,info =getFileVersion(enumModules()[1].PathToFile)
+if not info then UE4ver=0 return end
+--return info.minor
+UE4ver=tonumber(info.minor..'.'..info.release)
+end
+
+function ue4checkchildoffset()
+if UE4ver&lt;15 then ue4findchildoffset() end
+if targetIs64Bit() then
+if 		UE4ver&gt;=25 then parentOffset=0x40 childOffset=0x50
+elseif 	UE4ver&gt;=22 then parentOffset=0x40 childOffset=0x48
+elseif 	UE4ver&gt;=20 then parentOffset=0x30 childOffset=0x38
+else 					parentOffset=0x30 childOffset=0x38 end
+else end
+end
+
+function ue4findchildoffset()
+local address=getAddressSafe(StaticFindObject('/Script/Engine.GameEngine'))
+if not address or address==0 then error('StaticFindObject not functioning as expected...')end
+UE4ver=nil
+local pointer=readPointer(address+0x50)
+if pointer then pointer=readPointer(pointer) if pointer then UE4ver=25 end end
+if not UE4ver then pointer=readPointer(address+0x48) if pointer then pointer=readPointer(pointer) if pointer then UE4ver=22 end end end
+if not UE4ver then UE4ver=20 end
+end
+
+function GetFullNamei(re,object,includeparent)
+local mem=allocateMemory(0x100)
+local str1,str2
+if not GFNExStub then GFNExStub=createExecuteCodeExStub(0,getAddress('GetFullName'), 0,0) end
+re.executeStub(GFNExStub,{object, mem},nil,true)
+--executeCodeEx(0, nil, getAddress('GetFullName'), object, mem)
+str1=readPointer(mem)
+if str1 then str1=readString(str1,readInteger(mem+0x8)*2,true) end
+if str1 then
+if includeparent then
+   if string.find(str1,' ') then
+   local parent=readPointer(object+parentOffset)
+   if parent then
+      --executeCodeEx(0, nil, getAddress('GetFullName'), parent, mem+0x50)
+      local typ=str1:sub(1,string.find(str1,' ')-1)
+      if string.find(typ,'BlueprintGeneratedClass') or string.find(typ,'DynamicClass') or readInteger(object+0xC)&lt;2000 and string.find(typ,'Class') then
+         re.executeStub(GFNExStub,{parent, mem+0x50},nil,true)
+         str2=readPointer(mem+0x50)
+         if str2 then str2=readString(str2,readInteger(mem+0x58)*2,true) end
+         deAlloc(mem)
+	     if str2=='None' then return str1
+         else return str1..' ~ '..str2 end
+      end
+   end
+   end
+end
+end
+deAlloc(mem)
+return str1
+end
+
+
+function GetFullNameSafei(re,object)
+local mem=allocateMemory(0x100)
+if not GFNSExStub then GFNSExStub=createExecuteCodeExStub(0,getAddress('GetFullNameSafe'), 0,0) end
+re.executeStub(GFNSExStub,{mem, object},nil,true)
+--executeCodeEx(0, nil, getAddress('GetFullNameSafe'),mem, object)
+local str=readPointer(mem)
+if str then str=readString(str,readInteger(mem+0x8)*2,true) end
+deAlloc(mem)
+return str
+end
+
+
+function StaticFindObjecti(re,name)
+local mem=allocateMemory(0x100)
+writeString(mem,name,true)
+if not SFOExStub then SFOExStub=createExecuteCodeExStub(0,getAddress('StaticFindObject'), 0,0,0,0) end
+local address=re.executeStub(SFOExStub,{getAddress('CoreUObject'),0,mem,0},nil,true)
+--executeCodeEx(0, nil, getAddress('StaticFindObject'), getAddress('CoreUObject'), 0, mem, 0)
+deAlloc(mem)
+if not address then error(name..' could not be found...')end
+return string.format('%X',address)
+end
+
+function ue4createstruct(fullname,name,depth,isfullname)
+	local re=createRemoteExecutor()
+	local address=getAddress(StaticFindObjecti(re,fullname))
+	local class=readPointer(address+0x10)
+    local classname,isUserDefinedStruct
+	local list=readPointer('GUObjectArray+10')
+	local eu4type={
+		['BoolProperty']=vtByte,
+		['ByteProperty']=vtByte,
+		['FloatProperty']=vtSingle,
+        ['StructProperty']=vtSingle,
+		['IntProperty']=vtDword,
+        ['NameProperty']=vtDword,
+		['TextProperty']=vtPointer,
+        ['ArrayProperty']=vtPointer,
+        ['MapProperty']=vtPointer,
+        ['ClassProperty']=vtPointer,
+		['ObjectProperty']=vtPointer}
+	--deletestruct(name)
+	local struct=createStructure(name)
+	local k=0
+	if targetIs64Bit() then
+		if UE4ver&gt;=25 then
+			while(true) do
+				if not address then break end
+				if depth or readPointer(address+0x10)==class then
+					local pointer= readPointer(address+childOffset)
+					local size=readInteger(address+childOffset+8)
+					while(true)do
+						local str=GetFullNameSafei(re,pointer)
+						--print(str)
+						if str and str~='' and str~='none' then
+						   local typ=str:sub(1,string.find(str,' ')-1)
+						   local e=struct.addElement()
+						   e.Offset=readInteger(pointer+0x4C)
+						   if isfullname then e.Name=string.format('%X %s',pointer,str)
+						   else e.Name=str:sub(string.find(str,':')+1,str:len()) end
+						   e.Vartype=eu4type[typ]
+						   if e.Vartype==nil then e.Vartype=vtDword end
+						   if typ=='StructProperty' then for i=2,(readInteger(pointer+0x3C)/4) do local f=struct.addElement() f.Offset=readInteger(pointer+0x4C)+i*4-4 f.Name=e.Name..'_'..i f.Vartype=e.Vartype end e.Name=e.Name..'_1'  end
+						   if typ=='ArrayProperty' then local f=struct.addElement() f.Offset=readInteger(pointer+0x4C)+8 f.Name=e.Name..'_size' f.Vartype=vtDword f=struct.addElement() f.Offset=readInteger(pointer+0x4C)+0xC f.Name=e.Name..'_sizes' f.Vartype=vtDword end
+                           if typ=='BoolProperty' then e.ChildStructStart=readBytes(pointer+0x7A,1)end
+                        end
+                        pointer=readPointer(pointer+0x20)
+                        if not pointer then break end
+						local offset=readInteger(pointer+0x4C)
+						if not offset then break end
+						--if offset&gt;size then break end
+					end
+					address=readPointer(address+parentOffset)
+				else break end
+				k=k+1
+				if depth then if k&gt;depth then break end end
+			end
+		else
+            classname=GetFullName(class)
+            if classname then isUserDefinedStruct=string.find(classname,'UserDefinedStruct')end
+			local l=0
+			while(true) do
+				if not address then break end
+				if depth or readPointer(address+0x10)==class then
+					local pointer= readPointer(address+childOffset)
+					local size=readInteger(address+childOffset+8)
+					while(true)do
+						local str=GetFullNamei(re,pointer)
+						--print(str)
+						if str and str~='' and str~='None' then
+						--print(str)
+						local typ=str:sub(1,string.find(str,' ')-1)
+						if not string.find(typ,'Function')then
+                            --print(str)
+							local e=struct.addElement()
+							e.Offset=readInteger(pointer+0x44)
+							if isfullname then e.Name=string.format('%X %s',pointer,str)
+							else e.Name=str:sub(string.find(str,':')+1,str:len()) if isUserDefinedStruct then e.Name=e.Name:sub(1,string.find(e.Name,'_')-1) end end
+							e.Vartype=eu4type[typ]
+							if e.Vartype==nil then e.Vartype=vtDword end
+							if typ=='StructProperty' then for i=2,(readInteger(pointer+0x34)/4) do local f=struct.addElement() f.Offset=readInteger(pointer+0x44)+i*4-4 f.Name=e.Name..'_'..i f.Vartype=e.Vartype end e.Name=e.Name..'_1'  end
+							if typ=='ArrayProperty' then local f=struct.addElement() f.Offset=readInteger(pointer+0x44)+8 f.Name=e.Name..'_size' f.Vartype=vtDword f=struct.addElement() f.Offset=readInteger(pointer+0x44)+0xC f.Name=e.Name..'_sizes' f.Vartype=vtDword end
+                            if typ=='BoolProperty' then e.ChildStructStart=readBytes(pointer+0x72,1)end
+						end
+                        end
+						pointer=readPointer(pointer+0x28)
+                        if not pointer then break end
+						local offset=readInteger(pointer+0x44)
+						if not offset then break end
+						--if offset&gt;size then break end
+					end
+					address=readPointer(address+parentOffset)
+					--print(address)
+				else break end
+				k=k+1
+				if depth then if k&gt;depth then break end end
+			end
+		end
+	end
+	struct.addToGlobalStructureList()
+	re.Destroy()
+end
+
+
+function getInsForJump(address,registername,destination,allocsize,SharedMemoryName)
+  address = getAddressSafe(address)
+  if not address then error('getInsForJump address nil') return end
+  if not allocsize then allocsize=4096 end
+  destination=getAddressSafe(destination)
+  if not destination then
+	if not SharedMemoryName then destination = allocateMemory(allocsize,address)
+	else destination = allocateSharedMemory(SharedMemoryName,allocsize) end
+  end
+  local size = (address+5-destination&gt;0x7FFFFFFF) and 14 or 5
+  if registername then
+	unregisterSymbol(registername)
+	registerSymbol(registername,destination,true)
+  end
+  local opcodes = {}
+  local i = 0
+  while(i&lt;size) do
+    local ext, opc=splitDisassembledString(disassemble(address+i))
+    opcodes[#opcodes+1] = opc
+    i=i+getInstructionSize(address+i)
+  end
+  local copy = table.concat(opcodes,'\r\n')
+  local readAsTable = true
+  local byt = readBytes(address,i,readAsTable)
+  for j=1,#byt do byt[j] = ('%02X'):format(byt[j]) end
+  local bytes = table.concat(byt, ' ')
+  return i,copy,bytes,size,destination
+end
+
+function cycleFullCompact(sender,force)
+local state = not(compactmenuitem.Caption == 'Compact View Mode')
+if force~=nil
+then state = not force
+end
+compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'
+getMainForm().Splitter1.Visible = state
+getMainForm().Panel4.Visible = state
+getMainForm().Panel5.Visible = state
+end
+
+function addCompactMenu()
+if compactmenualreadyexists
+then return end
+local parent = getMainForm().Menu.Items
+compactmenuitem = createMenuItem(parent)
+parent.add(compactmenuitem)
+compactmenuitem.Caption = 'Compact View Mode'
+compactmenuitem.OnClick = cycleFullCompact
+compactmenualreadyexists = 'yes'
+end
+
+addCompactMenu()
+--cycleFullCompact(nil,true)
+
+if syntaxcheck then return end
+[ENABLE]
+if not process or not enumModules()[1] then print('Error: No process selected...') error('process is nil') end
+ue4versioncheck()
+
+local address=findAddress('StaticFindObject',0,'48 89 5C 24 08 48 89 74 24 18 55 57 41 54 41 56 41 57 48 *  *  48 83 EC *  80 3D *  *  *  *  00banana',process,nil,0,true)[1]
+if not address then address=findAddress('StaticFindObject',0,'3B 05 *  *  *  03 0F 94 C0 84 C0 74 *  33 C0banana',process,nil,0,true,true,true)[1]end
+if not address then address=findAddress('StaticFindObject',0,'48 83 EC 70 48 C7 40 A8 FE FF FF FF 48 89 58 08 48 89 68 18banana',process,nil,0,true,true)[1]end
+if not address then error('StaticFindObject aob not found...')end
+unregisterSymbol('StaticFindObject')
+registerSymbol('StaticFindObject',address,true)
+
+local address=findAddress('GUObjectArray',0,'44 8B * * * 48 8D 05 * * * * * * * * * 48 89 71 10banana',process,nil,0,true)[1]
+if not address then address=findAddress('GUObjectArray',0,'40 53 48 83 EC 20 48 8B D9 48 85 D2 74 1Abanana',process,nil,0,true)[1]end
+if not address then error('GUObjectArray aob not found...')end
+findAddress('GUObjectArray',1,address)
+
+unregisterSymbol('CoreUObject')
+local address=readPointer('[[GUObjectArray+10]]+18')
+if address&gt;0x10000 then registerSymbol('CoreUObject',readPointer('[[GUObjectArray+10]]+18'),true)
+else registerSymbol('CoreUObject',readPointer('[GUObjectArray+10]+18'),true)end
+
+ue4checkchildoffset()
+
+if UE4ver&gt;=25 then findAddress('GetFullNameSafe',1,'40 53 48 83 EC 20 48 8B C2 48 8B D9 48 85 D2 *  *  48 *  *  48 *  *  E8 *  *  *  *  48 8B C3 48 83 C4 20 5B C3 33 C0 48 89 01 48 89 41 08 8D 50 05banana',process,nil,0,true) end
+if UE4ver&gt;=24 then local address= findAddress('GetFullName',0,'48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 33 C0 4C 8B F2 48 89 02 48 8B F9 48 89 42 08 49 8B CE BA 80 00 00 00 41 8B D9 49 8B F0banana',process,nil,0,true,true)[1]
+   if not address then address=findAddress('GetFullName',0,'48 89 5C 24 10 48 89 6C 24 18 56 57 41 56 48 83 EC 30 48 8B DA 45 33 F6 4C 89 32 48 8B F1 4C 89 72 08 48 8B CB BA 80 00 00 00banana',process,nil,0,true)[1]end
+   if not address then address=findAddress('GetFullName',0,'48 8B DA 45 33 F6 4C 89 32banana',process,nil,0,true,true,true)[1]end
+   if not address then error('GetFullName aob not found...')end
+   unregisterSymbol('GetFullName')
+   registerSymbol('GetFullName',address,true)
+elseif UE4ver&gt;=21 then findAddress('GetFullName',1,'48 89 5C 24 18 55 56 41 56 48 83 EC 20 45 *  F6 *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  48banana',process,nil,0,true)
+else findAddress('GetFullName',1,'44 89 72 08 BA 80 00 00 00banana',process,nil,0,true,true,true)end
+
+--if UE4ver&gt;=21 then findAddress('GEngine',1,'48 * 05 * * * * 48 * 88 * 07 00 00 48 * 01 * 90 * 01 00 00banana',process)end
+findAddress('GEngine',1,'41 B8 01 00 00 00 * * * 48 8B 0D * * * * E8 * * * * 48 85 C0banana',process)
+if UE4ver&gt;=24 then findAddress('FNameString',1,'8B 01 48 8B DA 8B F8 44 0F B7 C0 C1 EF 10 48 8B F1banana',process,nil,0,true,true)end
+
+--findAddress('GWorld',1,'4D 8B 94 24 50 0C 00 00banana',process)
+
+createThread(ue4createstruct('/Script/Engine.GameEngine','GameEngine',0))
+createThread(ue4createstruct('/Script/Engine.GameInstance','GameInstance',0))
+createThread(ue4createstruct('/Script/Engine.LocalPlayer','LocalPlayer',1))
+createThread(ue4createstruct('/Script/Engine.PlayerController','PlayerController',2))
+createThread(ue4createstruct('/Script/Engine.CharacterMovementComponent','MovementComponent',0))
+createThread(ue4createstruct('/Script/Engine.CapsuleComponent','CapsuleComponent',3))
+createThread(ue4createstruct('/Script/Engine.Character','GPlayer',0))
+
+createThread(ue4createstruct('/Script/Engine.World','World',0))
+
+[DISABLE]
+--cycleFullCompact(nil,false)
+unregisterSymbol('GetFullName')
+unregisterSymbol('StaticFindObject')
+unregisterSymbol('GetFullNameSafe')
+unregisterSymbol('GEngine')
+unregisterSymbol('GUObjectArray')
+unregisterSymbol('CoreUObject')
+unregisterSymbol('FNameString')
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>26027</ID>
+          <Description>"Basic UE4 Object Dumper"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+
+
+function ue4dump(file,address,size,i,start,stop)
+local re=createRemoteExecutor()
+local k=0
+for j=start,stop do
+local pointer=readPointer(address+j*0x18)
+if pointer then
+local objid=readInteger(pointer+0xC)
+if objid then
+if objid&lt;size then
+local str=string.format('%X',pointer)
+for i=0,15-str:len() do str='0'..str end
+local strid=string.format('%u',objid)
+for i=0,7-strid:len() do strid='0'..strid end
+local name=GetFullNamei(re,pointer,true)
+if name then
+local typ=name:sub(1,string.find(name,' ')-1)
+if string.find(typ,'Property') then strid=string.format('%X',readInteger(pointer+0x44)) for i=0,7-strid:len() do strid=' '..strid end end
+file:write(string.format('[%s] %s %s\n',strid,str,name))
+if UE4ver&gt;=25 then
+--if string.find(typ,'BlueprintGeneratedClass') or string.find(typ,'UserDefinedStruct') or objid&lt;2000 and string.find(typ,'Class') then
+--if not string.find(name,'Default__')then
+if not string.find(name,'Default__') and readInteger(pointer+childOffset+8)~=readInteger(pointer+childOffset+0xC) and string.find(typ,'Struct') or string.find(typ,'Class') or typ=='Function'  then
+local pointers= readPointer(pointer+childOffset)
+while(true)do
+	if not pointers or pointers&lt;0x10000 then break end
+    local pointerss=readPointer(pointers+0x8)
+    if not pointerss or pointerss&lt;0x10000 then break end
+    pointerss=readPointer(pointerss)
+    if not pointerss then break end
+    pointerss=readPointer(pointers+0x10)
+    if not pointerss or pointerss&lt;0x10000 then break end
+    pointerss=readPointer(pointerss)
+    if not pointerss then break end
+
+	local propname=GetFullNameSafei(re,pointers)
+	if not propname then break end
+	if propname=='None' then break end
+	local offset=readInteger(pointers+0x4C)
+	local strid=string.format('%X',offset)
+	for i=0,7-strid:len() do strid=' '..strid end
+    local str=string.format('%X',pointers)
+    for i=0,15-str:len() do str='0'..str end
+	file:write(string.format('[%s] %s %s\n',strid,str,propname))
+
+	pointers=readPointer(pointers+0x20)
+end
+end
+end
+k=k+1
+
+end
+end
+end
+end
+end
+totalobject=totalobject+k
+--print(i..':'..k)
+re.destroy()
+end
+createThread(function()
+local list=readPointer('GUObjectArray+10')
+local size
+if UE4ver&gt;=20 then size=readInteger('GUObjectArray+24')
+else size=readInteger('GUObjectArray+1C')end
+local username = os.getenv('USERNAME')
+local Path = 'C:\\Users\\'..username..'\\Desktop\\'
+local file,err = io.open(string.format('%s[%s] ObjectsDump.txt ',Path,process), 'w')
+assert(file,err)
+file:write(string.format('Process: %s\nTimeStamp: %s\n\n\n',process,os.date()))
+--local re={rei1,rei2,rei3,rei4,rei5}
+totalobject=0
+--allobject=createStringlist()
+if UE4ver&gt;=20 then
+for i=0,5 do
+	local num,start,stop=0x800,0,0
+	for j=0,31 do
+		start=stop
+		stop=stop+num
+		local address=readPointer(list+i*8)
+		if address and address~=0  then createThread(ue4dump(file,address,size,i,start,stop-1))end
+	end
+end
+else
+local num,start,stop=0x1000,0,0
+	for j=0,63 do
+		start=stop
+		stop=stop+num
+		if list and list~=0  then createThread(ue4dump(file,list,size,i,start,stop-1))end
+	end
+end
+file:close()
+print('totalobject:'..totalobject)
+print(string.format('%s[%s] ObjectsDump.txt ',Path,process))
+end)
+ 
+ 
+[DISABLE]
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26040</ID>
+          <Description>"NoClip &amp; Fly                                            Numpad6 :Toggle, Space :Up, LeftCtrl :Down"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+
+[ENABLE]
+local address=getAddressSafe('[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+PlayerController.bActorEnableCollision')
+if address then
+local bActorEnableCollision=readBytes(address,1) &amp; ~ ChildStructStart('PlayerController','bActorEnableCollision')
+writeBytes(address,bActorEnableCollision)
+end
+
+--[[
+Enum /Script/Engine.EMovementMode
+0:MOVE_None
+1:MOVE_Walking
+2:MOVE_NavWalking
+3:MOVE_Falling
+4:MOVE_Swimming
+5:MOVE_Flying
+6:MOVE_Custom
+7:MOVE_MAX
+
+local list=+0x40
+for i=0,readInteger(list+8)-1 do
+local pointer=readPointer(list)+i*0x10
+local enum=readInteger(pointer+8)
+local name=FNameString(pointer)
+print(enum..':'..name)
+end
+]]
+
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MovementMode')
+if address then
+writeBytes(address,5)
+end
+
+if not RelativeLocationoffset then
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CapsuleComponent]+CapsuleComponent.RelativeLocation_3')
+if address then
+local ms = createMemScan()
+ms.firstScan(soExactValue,vtDword,rtTruncated,readInteger(address),'',address+4,address+0x1000,'',fsmNotAligned,'',false,false,false,false)
+ms.waitTillDone()
+f = createFoundList(ms)
+f.initialize()
+ms.destroy()
+local value=getAddress(f[0])-address
+if value&gt;0 then RelativeLocationoffset=value end
+f.destroy()
+end
+end
+
+updown = createTimer()
+updown.Interval = 5
+updown.OnTimer = function(t)
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CapsuleComponent]+CapsuleComponent.RelativeLocation_3')
+if address then
+if isKeyPressed(VK_SPACE) then writeFloat(address+RelativeLocationoffset, readFloat(address+RelativeLocationoffset)+20)end
+if isKeyPressed(VK_LCONTROL) then writeFloat(address+RelativeLocationoffset, readFloat(address+RelativeLocationoffset)-20)end
+end
+end
+
+
+[DISABLE]
+updown.destroy()
+
+local address=getAddressSafe('[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+PlayerController.bActorEnableCollision')
+if address then
+local bActorEnableCollision=readBytes(address,1) | ChildStructStart('PlayerController','bActorEnableCollision')
+writeBytes(address,bActorEnableCollision)
+end
+
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MovementMode')
+if address then
+writeBytes(address,1)
+end
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>102</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>26041</ID>
+              <Description>"WASD"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+wasd = createTimer()
+wasd.Interval = 5
+wasd.OnTimer = function(t)
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CapsuleComponent]+CapsuleComponent.RelativeLocation_1')
+if address then
+if isKeyPressed(VK_S) then writeFloat(address+RelativeLocationoffset, readFloat(address+RelativeLocationoffset)+20)end
+if isKeyPressed(VK_W) then writeFloat(address+RelativeLocationoffset, readFloat(address+RelativeLocationoffset)-20)end
+if isKeyPressed(VK_A) then writeFloat(address+RelativeLocationoffset+4, readFloat(address+RelativeLocationoffset+4)+20)end
+if isKeyPressed(VK_D) then writeFloat(address+RelativeLocationoffset+4, readFloat(address+RelativeLocationoffset+4)-20)end
+end
+end
+
+[DISABLE]
+wasd.destroy()
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26039</ID>
+          <Description>"bCanBeDamaged false (Godmode)      Numpad4 :Deactive, Numpad5 :Active"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+
+[ENABLE]
+--CanBeDamaged = createTimer()
+--CanBeDamaged.setInterval(1000)
+--CanBeDamaged.OnTimer = function()
+local address=getAddressSafe('[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+PlayerController.bCanBeDamaged')
+if address then
+local bCanBeDamaged=readBytes(address,1) &amp; ~ ChildStructStart('PlayerController','bCanBeDamaged')
+writeBytes(address,bCanBeDamaged)
+end
+--end
+ 
+ 
+[DISABLE]
+--CanBeDamaged.destroy()
+
+local address=getAddressSafe('[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+PlayerController.bCanBeDamaged')
+if address then
+local bCanBeDamaged=readBytes(address,1) | ChildStructStart('PlayerController','bCanBeDamaged')
+writeBytes(address,bCanBeDamaged)
+end
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Activate</Action>
+              <Keys>
+                <Key>101</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Deactivate</Action>
+              <Keys>
+                <Key>100</Key>
+              </Keys>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26025</ID>
+          <Description>"Jump Multiplier                                       Numpad0 :Deactive, Numpad1 :Active &amp; Increase"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+jumpmultiplier=1
+if syntaxcheck then return end
+if not jumpdefault then jumpdefault=readFloat('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.JumpZVelocity')end
+if not MaxAccelerationdefault then MaxAccelerationdefault=readFloat('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxAcceleration')end
+if not AirControldefault then AirControldefault=readFloat('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.AirControl')end
+[ENABLE]
+jumpmuti=createHotkey(function()jumpmultiplier=jumpmultiplier+0.5 end,VK_NUMPAD1)
+jump = createTimer()
+jump.setInterval(1000)
+jump.OnTimer = function()
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.JumpZVelocity')
+local address2=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxAcceleration')
+local address3=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.AirControl')
+if address then writeFloat(address,jumpdefault*jumpmultiplier)
+writeFloat(address2,MaxAccelerationdefault*jumpmultiplier)
+writeFloat(address3,AirControldefault*jumpmultiplier)
+end
+end
+[DISABLE]
+jump.destroy()
+jumpmuti.destroy()
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.JumpZVelocity')
+local address2=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxAcceleration')
+local address3=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.AirControl')
+if address then writeFloat(address,jumpdefault)
+writeFloat(address2,MaxAccelerationdefault)
+writeFloat(address3,AirControldefault)
+end
+
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Activate</Action>
+              <Keys>
+                <Key>97</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Deactivate</Action>
+              <Keys>
+                <Key>96</Key>
+              </Keys>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26026</ID>
+          <Description>"WalkSpeed Multiplier                             Numpad2 :Deactive, Numpad3 :Active &amp; Increase"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+walkmultiplier=1
+if syntaxcheck then return end
+if not walkdefault then walkdefault=readFloat('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxWalkSpeed')end
+[ENABLE]
+walkpmuti=createHotkey(function() walkmultiplier=walkmultiplier+0.5 end,VK_NUMPAD3)
+walk = createTimer()
+walk.setInterval(1000)
+walk.OnTimer = function()
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxWalkSpeed')
+if address then writeFloat(address,walkdefault*walkmultiplier)end
+end
+[DISABLE]
+walk.destroy()
+walkpmuti.destroy()
+local address=getAddressSafe('[[[[[[[GEngine]+GameEngine.GameInstance]+GameInstance.LocalPlayers]]+LocalPlayer.PlayerController]+PlayerController.Character]+GPlayer.CharacterMovement]+MovementComponent.MaxWalkSpeed')
+if address then writeFloat(address,walkdefault)end
+
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Activate</Action>
+              <Keys>
+                <Key>99</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Deactivate</Action>
+              <Keys>
+                <Key>98</Key>
+              </Keys>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>25848</ID>
+          <Description>"Player"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <Address>GEngine</Address>
+          <Offsets>
+            <Offset>0</Offset>
+            <Offset>PlayerController.Character</Offset>
+            <Offset>LocalPlayer.PlayerController</Offset>
+            <Offset>0</Offset>
+            <Offset>GameInstance.LocalPlayers</Offset>
+            <Offset>GameEngine.GameInstance</Offset>
+          </Offsets>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>25853</ID>
+              <Description>"CharacterMovement"</Description>
+              <LastState Value="" RealAddress="00000000"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>+GPlayer.CharacterMovement</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>25854</ID>
+                  <Description>"JumpZVelocity"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>+MovementComponent.JumpZVelocity</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>25855</ID>
+                  <Description>"MaxWalkSpeed"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>+MovementComponent.MaxWalkSpeed</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>25857</ID>
+                  <Description>"MaxWalkSpeedCrouched"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>+MovementComponent.MaxWalkSpeedCrouched</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>25858</ID>
+                  <Description>"MaxAcceleration"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>+MovementComponent.MaxAcceleration</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>26029</ID>
+      <Description>"DissectCode (Memory View -&gt; Ctrl+J or (Tools -&gt; Dissect code) )"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>26028</ID>
+          <Description>"Save DissectCode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+local path=string.format('C:\\Users\\%s\\Documents\\My Cheat Tables\\%s_dissectCode',os.getenv('USERNAME'),process:sub(1,string.find(process,'%.')-1))
+getDissectCode().saveToFile(path)
+--getDissectCode().loadFromFile(path)
+ 
+[DISABLE]
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26030</ID>
+          <Description>"Load DissectCode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+local path=string.format('C:\\Users\\%s\\Documents\\My Cheat Tables\\%s_dissectCode',os.getenv('USERNAME'),process:sub(1,string.find(process,'%.')-1))
+--getDissectCode().saveToFile(path)
+getDissectCode().loadFromFile(path)
+ 
+[DISABLE]
+
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

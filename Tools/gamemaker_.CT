@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"GameMaker"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript Async="1">{$lua}
+function checkOffset()
+  local of,q={
+  {0x68,0x10,0x58,0x10},{0x44,0x8,0x2C,0x10},{0xD0,0x8,0x44,0x10}
+  ,{0xBC,0x8,0x34,0x10},{0xB8,0x8,0x4},{0xD0,0x8,0x60,0x10}
+  }
+  local num,list,pointer,pointers=0
+  if Is64 then q=1
+  else
+    for p=2,#of do
+      list={}
+      for i=1,#ObjectTable do
+        pointer=readPointer(ObjectTable[i].Address+of[p][1])
+        if pointer and readPointer(pointer+of[p][2]) and readPointer(pointer+of[p][2])%4==0
+        and readPointer(readPointer(pointer+of[p][2])+of[p][3])
+        and (of[p][4] and readPointer(readPointer(readPointer(pointer+of[p][2])+of[p][3]+of[p][4])) or readPointer(readPointer(readPointer(pointer+of[p][2])+of[p][3])))
+        and (of[p][4] and readPointer(readPointer(readPointer(readPointer(pointer+of[p][2])+of[p][3])+of[p][4])) or not of[p][4])
+        then
+          print(string.format('%X:%s',ObjectTable[i].Address,ObjectTable[i].Name))
+          list[#list+1]=pointer
+        end
+      end
+      print(p..':'..#list)
+      if #list&gt;num then q=p num=#list end
+    end
+  end
+  print(q)
+  for i=0,#of[q] do
+    unregisterSymbol('Of'..i)
+    registerSymbol('Of'..i,(i==0 and (Is64 and 0x18 or 0xC) or of[q][i]),true)
+  end
+end
+
+function enumObjectsProperties()
+  local Of1,Of2,Of3,pointer=getAddress('Of1'),getAddress('Of2'),getAddress('Of3')
+  for i=1,#ObjectTable do
+    pointer=readPointer(readPointer(ObjectTable[i].Address+Of1)+Of2)
+    if pointer and readPointer(pointer+Of3) then
+      pointer=readPointer(pointer+Of3)
+      getProperties(pointer,ObjectTable[i].Name)
+    end
+  end
+end
+
+function getProperties(object,objectname)
+  ObjectProperties[objectname]={}
+  ObjectProperties[objectname].List={}
+
+  local Of4=getAddressSafe('Of4')
+  if not Of4 then return end
+  local num,maxsize,nameindex,pointer=readInteger(object),enumMemoryRegions()[4].BaseAddress
+  local size,propdata,val1,val2,result,result2,result2,str,start,stop=Is64 and 8 or 4
+  if not FieldOnly then FieldOnly={}end
+  if not donenum then donenum=0 end
+
+  local nameindex2
+
+  if not num then return end
+  if num&gt;0x10000 then num=0x10000 end
+  for j=0,num*size do
+    pointer=readPointer(object+Of4)+j*size
+
+    if readPointer(readPointer(pointer))then
+      if not Older and objectname=='BaseGame' then
+        nameindex=readInteger(pointer+size)
+        nameindex2=readInteger(pointer-size)
+        if nameindex&gt;1 and nameindex2&gt;1 and readPointer(readPointer(pointer-size*3)) then
+          Older= nameindex-1 == nameindex2
+          if Older then print(string.format('[%08X] %016X %s ',j*size,pointer,objectname))end
+        end
+      end
+      nameindex=readInteger(pointer+(not Older and size or -size*2))
+      val1,val2=readDouble(readPointer(pointer)),readQword(readPointer(pointer))
+      if string.find(string.format('%X',val2),'78787878') then val1=0 end
+
+      if nameindex&lt;maxsize and nameindex&gt;1 and not IgnoreList[nameindex] then
+        --if type(isNewer)~=type(true) then isNewer= nameindex&gt;maxnamelist and true or false end
+        if not NameList[nameindex] and not done --and isNewer
+        --and nameindex&gt;maxnamelist
+        then
+          donenum=donenum+1
+          done=false
+          done=donenum&gt;5 and true or false
+          if done then goto skip end
+          print(string.format('[%08X] %016X %016X %s.%X %0.2f',j*size,pointer,val2,objectname,nameindex,val1))
+          print('running scanner')
+          result=fastscan(nameindex)
+          if not result then goto skip end
+          if result[1] then
+            local g
+            for k=1,#result do
+              result2=readString(readPointer(getAddress(result[k])-size))
+              if result2 and result2:len()&gt;4 and result2:len()&lt;40 and not string.find(result2,'[^%w_@]') and not result2:find('xxx') then g=-size result=result[k] break end
+              result2=readString(readPointer(getAddress(result[k])+size))
+              if result2 and result2:len()&gt;4 and result2:len()&lt;40 and not string.find(result2,'[^%w_@]') and not result2:find('xxx')then g=size result=result[k] break end
+              result2=readString(readPointer(getAddress(result[k])+size*2))
+              if result2 and result2:len()&gt;4 and result2:len()&lt;40 and not string.find(result2,'[^%w_@]') and not result2:find('xxx')then g=size*2 result=result[k] break end
+            end
+
+            if g then
+              local curSize,RegionSize,BaseAddress=getregionsize(getAddress(result))
+              start=BaseAddress
+              stop=BaseAddress+RegionSize
+              print(result2)
+              if nameindex&gt;maxnamelist then maxnamelist=nameindex end
+              NameList[nameindex]=result2
+              NameStr[#NameStr+1]=string.format('[%08X] %s\n',nameindex,result2)
+              if not IgnoreList[start] then
+                IgnoreList[start]=true
+                for i=start,stop,size do
+                  result=readString(readPointer(i))
+                  if result then
+                    result2=readInteger(i-g)
+                    if result2 and not NameList[result2] and result2&lt;maxsize and not string.find(result,'[^%w_@]') and result~='' and result:len()&gt;0 and not result:find('xxx') then
+                      if result2&gt;maxnamelist then maxnamelist=result2 end
+                      NameList[result2]=result
+                      NameStr[#NameStr+1]=string.format('[%08X] %s\n',result2,result)
+                    end
+                  end
+                end
+              end
+              print('done')
+            else IgnoreList[nameindex]=true
+            end
+          end
+        end
+        ::skip::
+        strtable[#strtable+1]=string.format('[%08X] %016X %016X %s.%s  %0.2f  \n',j*size,pointer,val2,objectname,(not NameList[nameindex] and string.format('%08X',nameindex) or NameList[nameindex]),val1)
+        str=(string.format('%s.%s',objectname,(not NameList[nameindex] and string.format('%08X',nameindex) or NameList[nameindex]))):lower()
+        if type(NameList[nameindex])==type('') and not MemberTable[str] then MemberTable[str]=j*size end
+        if type(NameList[nameindex])==type('') and not ObjectProperties[objectname].List[nameindex]
+        then
+          propdata={}
+          propdata.Offset=j*size
+          propdata.Name=NameList[nameindex]
+          ObjectProperties[objectname][#ObjectProperties[objectname]+1]=propdata
+          ObjectProperties[objectname].List[nameindex]=j*size
+        end
+        if type(NameList[nameindex])==type('') and not FieldOnly[(NameList[nameindex]):lower()] then FieldOnly[(NameList[nameindex]):lower()]=j*size end
+      end
+    end
+  end
+  print(objectname..':'..num..':'..tostring(Older))
+end
+
+function enumNameList()
+  local list,size,k,pointer,str,loopdone=getAddress('NameList'),Is64 and 8 or 4,0
+  if not NameList then NameList={}end
+  if not NameStr then NameStr={}end
+  if readPointer(readPointer(list+size*2)) and readInteger(list+size*3)&gt;readInteger(list+size) then list=list+size*2 end
+  ::loop::
+  --local num= readInteger(list+size*2)==0 and readInteger(list+size) or(readInteger(list+size*2)&gt;100 and readInteger(list+size*2) or readInteger(list-size*2))
+  --if num&gt;0x10000 or num&lt;50  then num=0x10000 end
+  --print(num)
+  num=0x1000
+  if not done then
+    for i=0,num*2 do
+      if pointer~=readPointer(readPointer(list)+i*size)then
+        pointer=readPointer(readPointer(list)+i*size)
+        str=readString(pointer)
+        if str and not string.find(str,'[^%w_@]') and str~='' and str:len()&gt;0 and not str:find('xxx') then
+      --print(string.format('%04X:%s',i,str))
+          if not NameList[i] then NameList[i]=str
+          elseif NameList[i]~=str then NameList[i]=NameList[i]..'/'..str end
+          k=k+1
+          NameStr[k]=string.format('[%08X] %s\n',i,str)
+          if i&gt;maxnamelist then maxnamelist=i end
+        end
+      end
+    end
+  end
+  if not loopdone then
+    for i=size,0x10,4 do
+      if readPointer(readPointer(list-i)) then list=list-i loopdone=true goto loop end
+    end
+    for i=size,0x10,4 do
+      if readPointer(readPointer(list+i)) then list=list+i loopdone=true goto loop end
+    end
+  end
+end
+
+function startstop(modulename,stopaddress)
+  if(modulename==0 or modulename==nil or modulename=='')then modulename=0 stopaddress=0x00007fffffffffff end
+  if type(modulename)==type(0) then modulename=string.format('%X',modulename)
+  elseif type(modulename)==type('') then modulename=[["]]..modulename..[["]]  end
+  if(stopaddress==0 or stopaddress==nil or stopaddress=='')then
+    stopaddress=getNameFromAddress(getAddress(modulename),true,false)
+    if(stopaddress:find("+")~=nil)then stopaddress=stopaddress:sub(0,stopaddress:find("+")-1)end
+	if(getModuleSize(stopaddress)==nil)then error('Module '..modulename..' not found') end
+    modulename=getAddress([["]]..stopaddress..[["]])
+	stopaddress=modulename+getModuleSize(stopaddress)
+    modulename=string.format('%X',modulename)
+  end
+  if type(stopaddress)==type(0) then stopaddress=string.format('%X',stopaddress)end
+  return modulename,stopaddress
+end
+
+function pointerscan(value,modulename,stopaddress,value2)
+  local ms = createMemScan()
+  modulename,stopaddress=startstop(modulename,stopaddress)
+  print(modulename..'~'..stopaddress)
+  if value2 then ms.firstScan(soValueBetween,targetIs64Bit() and vtQword or vtDword,rtTruncated,value,value2,modulename,stopaddress,'',fsmNotAligned,'',false,false,false,false)
+  else ms.firstScan(soExactValue,targetIs64Bit() and vtQword or vtDword,rtTruncated,value,value2,modulename,stopaddress,'',fsmNotAligned,'',false,false,false,false)end
+  ms.waitTillDone()
+  local f = createFoundList(ms)
+  f.initialize()
+  ms.destroy()
+  local result={}
+  for i=0,f.Count-1 do result[i+1]=f[i] end
+  f.destroy()
+  return result
+end
+
+function stringscan(value,modulename,stopaddress,isUnicode)
+  local ms = createMemScan()
+  modulename,stopaddress=startstop(modulename,stopaddress)
+  ms.firstScan(soExactValue,vtString,rtTruncated,value,'',modulename,stopaddress,'',fsmNotAligned,'',false,false,isUnicode,true)
+  ms.waitTillDone()
+  local f = createFoundList(ms)
+  f.initialize()
+  ms.destroy()
+  local result={}
+  for i=0,f.Count-1 do result[i+1]=f[i] end
+  f.destroy()
+  return result
+end
+
+function sigscan(value,modulename,stopaddress)
+  local ms = createMemScan()
+  modulename,stopaddress=startstop(modulename,stopaddress)
+  ms.firstScan(soExactValue,vtByteArray,rtTruncated,value,'',modulename,stopaddress,'',fsmNotAligned,'',true,false,false,false)
+  ms.waitTillDone()
+  local f = createFoundList(ms)
+  f.initialize()
+  ms.destroy()
+  local result={}
+  for i=0,f.Count-1 do result[i+1]=f[i] end
+  f.destroy()
+  return result
+end
+
+function findAddress(Symbol,number,Address,size)
+    Address=getAddressSafe(Address)
+    if not size then size=0x200 end
+	local addr={}
+	local i=0
+	local j=1
+	while(i&lt;size) do
+		local ext, opc, byt, add=splitDisassembledString(disassemble(Address+i))
+		if ext~="" then
+			if(opc:find(",")~=nil)then
+				opc=opc:sub(opc:find(",")+1,opc:len())
+			else
+				opc=opc:sub(opc:find(" ")+1,opc:len())
+			end
+            if tonumber(opc:gsub("%[",""):gsub("]",""),16)then
+			  addr[j]=opc:gsub("%[",""):gsub("]","") j=j+1
+            end
+        end
+		if opc:find('],') then
+            opc=opc:sub(opc:find("%[")+1,opc:find("]")-1)
+            if tonumber(opc,16) then addr[j]=opc j=j+1 end
+        end
+
+		i=i+getInstructionSize(Address+i)
+	end
+    if number&lt;=0 then return addr end
+    --for i=1,#addr do print(addr[i]) end
+	unregisterSymbol(Symbol)
+	registerSymbol(Symbol,getAddressSafe(addr[number]),true)
+end
+
+function enumCScriptList()
+  local list,size,k,pointer,str=getAddress('CScriptList'),Is64 and 8 or 4,0,{}
+  local offset= (Is64 and {0x30} or (not readPointer(readPointer(readPointer(readPointer(list))+0xC)) and {0x8,0x5C} or {0xC}))
+  CScriptStr={}
+  if not extralist and not Is64 and not offset[2] then
+    extralist=createSymbolList()
+    extralist.register()
+  end
+  for i=0,(Is64 and readInteger(list-size*2) or readInteger(list+size*2))*2 do
+    if pointer~=(Is64 and readPointer(readPointer(list)+i*size) or readPointer(readPointer(readPointer(list)+i*size)+offset[1]))then
+      pointer=readPointer(readPointer(list)+i*size)
+      if not Is64 then pointer=readPointer(pointer+offset[1])end
+      if not readPointer(pointer) then break end
+      str=readString(readPointer(pointer+(not offset[2] and 0 or offset[2] )+(Is64 and offset[1] or 0)))
+      if str then
+      --print(string.format('%04X:%08X:%s',i*size,pointer,str))
+        k=k+1
+        if not Is64 and not getAddressSafe(str) and not offset[2]then
+          extralist.addSymbol('GM',str,readPointer(pointer+size),1)
+        end
+        CScriptStr[k]=string.format('[%04X] %08X %s\n',i*size,pointer,str)
+      end
+    end
+  end
+end
+
+function enumObjectList()
+  local list,size,k,Offset,pointer,str=readPointer('ObjectList'),Is64 and 8 or 4,0, not readPointer(readPointer(readPointer(readPointer(readPointer(readPointer('ObjectList')))+(Is64 and 0x18 or 0xC)))) and 0x14 or 0
+  ObjectList,ObjectTable,ObjectStr={},{},{}
+  for i=0,(readInteger(list+size))*2 do
+    if not readPointer(readPointer(readPointer(list)+i*size))then break end
+    if pointer~=readPointer(readPointer(readPointer(list)+i*size)+(Is64 and 0x18 or 0xC))then
+      pointer=readPointer(readPointer(readPointer(list)+i*size)+(Is64 and 0x18 or 0xC))
+      str=readString(readPointer(pointer+Offset))
+    --print(string.format('%04X:%08X:%s',i*size,pointer,str))
+      k=k+1
+      ObjectList[str:lower()]=i*size
+      ObjectStr[k]=string.format('[%04X] %08X %s\n',i*size,pointer,str)
+      ObjectTable[k]={}
+      ObjectTable[k].Name=str
+      ObjectTable[k].Address=pointer
+    end
+  end
+end
+
+function GM_SymbolLookupCallback(symbol)
+  if MemberTable and MemberTable[symbol:lower()] then return MemberTable[symbol:lower()] end
+  if ObjectList and ObjectList[symbol:lower()] then return ObjectList[symbol:lower()] end
+  if FieldOnly and FieldOnly[symbol:lower()] then return FieldOnly[symbol:lower()] end
+end
+
+function fastscan(value,modulename,stopaddress,value2)
+  local ms = createMemScan()
+  modulename,stopaddress=startstop(modulename,stopaddress)
+  --print(modulename..'~'..stopaddress)
+  if value2 then ms.firstScan(soValueBetween,targetIs64Bit() and vtQword or vtDword,rtTruncated,value,value2,modulename,stopaddress,'+W',fsmAligned,'4',false,false,false,false)
+  else ms.firstScan(soExactValue,targetIs64Bit() and vtQword or vtDword,rtTruncated,value,value2,modulename,stopaddress,'+W',fsmAligned,'4',false,false,false,false)end
+  ms.waitTillDone()
+  local f = createFoundList(ms)
+  f.initialize()
+  ms.destroy()
+  local result={}
+  for i=0,f.Count-1 do result[i+1]=f[i] end
+  f.destroy()
+  return result
+end
+
+function getregionsize(address)
+local allregion=enumMemoryRegions()
+ for i=#allregion,1,-1 do
+  if allregion[i].BaseAddress&lt;=address then
+   local BaseAddress=allregion[i].BaseAddress
+   local RegionSize=allregion[i].RegionSize
+   local curSize=BaseAddress+RegionSize-address
+   return curSize,RegionSize,BaseAddress,i
+  end
+ end
+end
+
+function cycleFullCompact(sender,force)
+  local state = not(compactmenuitem.Caption == 'Compact View Mode')
+  if force~=nil then state = not force end
+  compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'
+  getMainForm().Splitter1.Visible = state
+  getMainForm().Panel4.Visible = state
+  getMainForm().Panel5.Visible = state
+end
+
+function addCompactMenu()
+  if compactmenualreadyexists then return end
+  local parent = getMainForm().Menu.Items
+  compactmenuitem = createMenuItem(parent)
+  parent.add(compactmenuitem)
+  compactmenuitem.Caption = 'Compact View Mode'
+  compactmenuitem.OnClick = cycleFullCompact
+  compactmenualreadyexists = 'yes'
+end
+
+addCompactMenu()
+
+if syntaxcheck then return end
+local size,strfind,strname,flag1,result1,result2,result3,list,pointer=(targetIs64Bit() and 8 or 4),{'&lt;unknown variable&gt;','Preparing %d objects','&lt;undefined&gt;'},{'NameList','ObjectList','CScriptList'}
+
+[ENABLE]
+if not process or not enumModules()[1] then print('Error: No process selected...') error('process is nil') end
+Is64=targetIs64Bit()
+
+local starttime=os.clock()
+if Is64 then result2=sigscan('48 8D',process)end
+
+for n=1,#strfind do
+  unregisterSymbol(strname[n])
+  result1=stringscan(strfind[n],process)
+  for i=1,#result1 do
+    print('result1:'..result1[i])
+    if not Is64 then result2=pointerscan(getAddress(result1[i]))end
+    for j=1,#result2 do
+      if (Is64 and string.find(disassemble(result2[j]),result1[i])) or not Is64 then
+        print(result1[i]..'&lt;-'..result2[j])
+        result3 = findAddress(strname[n],0,result2[j]..(Is64 and '' or '+4'),(n==3 and 0x100 or 0x50))
+        for k=1,#result3 do
+          print(result3[k])
+          for m=0,0x10,4 do
+            pointer=getAddress(result3[k])+m
+            if readPointer(pointer) and readPointer(pointer)%4==0 and readPointer(readPointer(pointer)) and readPointer(readPointer(readPointer(pointer))) then
+              flag1=false
+              if ( n==1
+              and readString(readPointer(readPointer(pointer)+size))
+              and readString(readPointer(readPointer(pointer)+4*size))
+              and readString(readPointer(readPointer(pointer)+size)):len()&gt;3
+              and readString(readPointer(readPointer(pointer))):len()&gt;3
+              --and readInteger(pointer-(Is64 and size*2 or -size ))&gt;500
+              )
+              or (n==2 )then flag1=true end
+              if n==3 then
+                pointer=readPointer(pointer)
+                local sizess=20
+                for o=size,sizess*size,size do
+                  if not readPointer(readPointer(readPointer(pointer+o)))then  break end
+                  if not readPointer(readPointer(readPointer(pointer+o)+(Is64 and 0x30 or 0x14))) then break end
+
+                  --if not not readPointer(readPointer(readPointer(readPointer(pointer+o))))then  break end
+                  if o==sizess*size then flag1=true end
+                end
+
+                if not flag1 then
+                  for o=size,sizess*size,size do
+                    if not readPointer(readPointer(readPointer(pointer+o)))then  break end
+                    if not readPointer(readPointer(readPointer(pointer+o)+(Is64 and 0x30 or 0xC))) then break end
+                  --if not not readPointer(readPointer(readPointer(readPointer(pointer+o))))then  break end
+                    if o==sizess*size then flag1=true end
+                  end
+                end
+
+                if not flag1 then
+                  for o=size,sizess*size,size do
+                    if not readPointer(readPointer(readPointer(pointer+o)))then  break end
+                    if not readPointer(readPointer(readPointer(pointer+o)+(Is64 and 0x30 or 0x8))) then break end
+                  --if not not readPointer(readPointer(readPointer(readPointer(pointer+o))))then  break end
+                    if o==sizess*size then flag1=true end
+                  end
+                end
+
+              end
+              if flag1 then
+                print('result3:'..result3[k])
+                unregisterSymbol(strname[n])
+                registerSymbol(strname[n],getAddress(result3[k])+m,true)
+                goto done
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  ::done::
+  if getAddressSafe(strname[n]) then print(string.format(strname[n]..' = %X',getAddress(strname[n])))
+  else print(strname[n]..' not found!')end
+end
+local flag2=false
+for i=1,#strname do
+  if not getAddressSafe(strname[i]) then break end
+  if i==#strname then flag2=true end
+end
+print('Scanner done : '..os.clock()-starttime)
+NameList={}
+NameStr={}
+MemberTable={}
+done=nil
+donenum=nil
+ObjectProperties={}
+maxnamelist=0
+IgnoreList={}
+strtable={}
+Older=nil
+if flag2 then
+  enumObjectList()
+  enumCScriptList()
+  enumNameList()
+  checkOffset()
+
+--  if getAddressSafe('gml_Script_init')then findAddress('BaseGame',4,'gml_Script_init')end
+--  if getAddressSafe('gml_Script_Load_Settings')then findAddress('BaseGame',4,'gml_Script_Load_Settings')end
+  if not getAddressSafe('[BaseGame]') then
+
+    local c,sizes,address,u=getregionsize(getAddress('ObjectList'))
+    local maxnum,pointer,num,curpointer=0
+    for i=address,address+sizes,4 do
+      pointer=readPointer(i)
+      if pointer and pointer%4==0 and readPointer(pointer) and getRTTIClassName(pointer) and getRTTIClassName(pointer):find('YYObjectBase') then
+       --print(string.format('%X',pointer))
+       num=readInteger(readPointer(pointer+getAddress('Of3')))
+       if num and num&gt;maxnum then maxnum=num curpointer=i end
+       print(string.format('%X-&gt;%X:%u',i,pointer,(not num and 0 or num)))
+       --break
+      end
+    end
+    unregisterSymbol('BaseGame')
+    registerSymbol('BaseGame',curpointer,true)
+  end
+  if getAddressSafe(getAddress( (not getAddressSafe('Of4') and '[BaseGame]' or '[[BaseGame]+Of3]' )))then
+    getProperties(getAddress( (not getAddressSafe('Of4') and '[BaseGame]' or '[[BaseGame]+Of3]' )),'BaseGame')
+  end
+  MemberTable={}
+
+  getProperties(getAddress( (not getAddressSafe('Of4') and '[BaseGame]' or '[[BaseGame]+Of3]' )),'BaseGame')
+
+  enumObjectsProperties()
+  ObjectProperties={}
+  MemberTable={}
+  IgnoreList={}
+  strtable={}
+  FieldOnly={}
+
+  print('Enum done : '..os.clock()-starttime)
+
+  GetLuaEngine().close()
+end
+if not GM_SymbolLookupCallbackID then
+  GM_SymbolLookupCallbackID=registerSymbolLookupCallback(GM_SymbolLookupCallback,slNotSymbol)
+end
+
+[DISABLE]
+
+unregisterSymbolLookupCallback(GM_SymbolLookupCallbackID)
+GM_SymbolLookupCallbackID=nil
+
+for i=1,#strname do
+ unregisterSymbol(strname[i])
+end
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>36</ID>
+          <Description>"Create Memory Record"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+function GM_createMemrec(name,startbaseoffsetnum,OffsetOnly)
+  if not ObjectProperties[name] then return end
+  local rec,minus,tec=getAddressList().createMemoryRecord(),(not getAddressSafe('Of4') and 1 or 0)
+  rec.setDescription(name)
+  rec.Type=vtByte
+  rec.IsAddressGroupHeader=true
+  rec.Options='[moHideChildren]'
+  rec.appendToEntry(memrec)
+  rec.Address= (startbaseoffsetnum==0 and 'ObjectList' or name)
+  rec.OffsetCount= (startbaseoffsetnum==0 and 8 or 3) - minus
+  rec.Offset[0]=0
+  for i=4 - minus,startbaseoffsetnum,-1 do
+    rec.OffsetText[5 - i - minus ]='Of'..i
+  end
+  if startbaseoffsetnum==0 then
+    rec.OffsetText[6-minus]=ObjectList[name:lower()]==0 and '0' or name
+    rec.Offset[7-minus]=0
+  end
+  for i=1,#ObjectProperties[name] do
+    tec=getAddressList().createMemoryRecord()
+    tec.setDescription(string.format('[%04X] %s',ObjectProperties[name][i].Offset,ObjectProperties[name][i].Name ))
+    tec.Type=vtDouble
+    tec.Address='+'..(not OffsetOnly and name..'.'..ObjectProperties[name][i].Name or string.format('%X',ObjectProperties[name][i].Offset))
+    tec.OffsetCount=1
+    tec.Offset[0]=0
+    tec.appendToEntry(rec)
+
+  end
+end
+if syntaxcheck then return end
+for i=memrec.Count-1,0,-1 do
+  memoryrecord_delete(memrec.Child[i])
+end
+[ENABLE]
+if ObjectProperties['BaseGame'] then GM_createMemrec('BaseGame',3,true) end
+for i=1,#ObjectTable do
+  if ObjectProperties[ObjectTable[i].Name] then GM_createMemrec(ObjectTable[i].Name,0,true) end
+end
+ 
+ 
+[DISABLE]
+
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Tool"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1</ID>
+              <Description>"ObjectList"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript Async="1">{$lua}
+if syntaxcheck then return end
+for i=memrec.Count-1,0,-1 do
+  memoryrecord_delete(memrec.Child[i])
+end
+[ENABLE]
+--enumObjectList()
+local rec = getAddressList().createMemoryRecord()
+rec.setDescription('ObjectList')
+rec.Type=vtAutoAssembler
+rec.appendToEntry(memrec)
+rec.Script='[ENABLE]\n{ ObjectList[Name]=Index\n'..table.concat(ObjectStr)..'}\n[DISABLE]'
+rec.DontSave=true
+--print(k)
+
+ 
+[DISABLE]
+
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2</ID>
+              <Description>"CScriptList"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript Async="1">{$lua}
+if syntaxcheck then return end
+for i=memrec.Count-1,0,-1 do
+  memoryrecord_delete(memrec.Child[i])
+end
+[ENABLE]
+--enumCScriptList()
+--print(k)
+local rec = getAddressList().createMemoryRecord()
+rec.setDescription('CScriptList')
+rec.Type=vtAutoAssembler
+rec.appendToEntry(memrec)
+rec.Script='[ENABLE]\n{\n'..table.concat(CScriptStr)..'}\n[DISABLE]'
+rec.DontSave=true
+
+[DISABLE]
+
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>3</ID>
+              <Description>"NameList"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript Async="1">{$lua}
+if syntaxcheck then return end
+for i=memrec.Count-1,0,-1 do
+  memoryrecord_delete(memrec.Child[i])
+end
+[ENABLE]
+--enumNameList()
+local rec = getAddressList().createMemoryRecord()
+rec.setDescription('NameList')
+rec.Type=vtAutoAssembler
+rec.appendToEntry(memrec)
+rec.Script='[ENABLE]\n{ NameList[Index]=Name\n'..table.concat(NameStr)..'}\n[DISABLE]'
+rec.DontSave=true
+
+--print(k)
+
+[DISABLE]
+
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>6</ID>
+              <Description>"Dump Object"</Description>
+              <LastState Activated="1"/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript Async="1">{$lua}
+if syntaxcheck then return end
+[ENABLE]
+
+local Path = 'C:\\Users\\'..os.getenv('USERNAME')..'\\Desktop\\'
+local filename= string.format('[%s] ObjectsDump.txt',process)
+local file,err = io.open(Path..filename, 'w')
+enumObjectsProperties()
+if getAddressSafe('[[BaseGame]+Of3]')then getProperties(getAddress('[[BaseGame]+Of3]'),'BaseGame')end
+file:write(table.concat(strtable))
+file:close()
+shellExecute(Path..filename)
+
+[DISABLE]
+
+--[==[
+local result,result2=stringscan([[c:\hudson\]],process)
+for i=1,#result do
+  if readString(result[i],100):find([[\List.h]]) then
+    result2=pointerscan(getAddress(result[i]),process)
+    for j=1,#result2 do
+      print(result2[j])
+
+    end
+  end
+end
+local list,data,pointer=0x10EB6C20,{}
+for i=0,256 do
+  pointer=readPointer(readPointer(readPointer(list+i*4)+0x68))
+  if readPointer(readPointer(readPointer(list+i*4)+0x2C))then
+    if not data[readPointer(readPointer(list+i*4)+0x2C)] then
+      data[readPointer(readPointer(list+i*4)+0x2C)]=1
+      print(readString(pointer))
+    end
+  end
+end
+return data
+]==]
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

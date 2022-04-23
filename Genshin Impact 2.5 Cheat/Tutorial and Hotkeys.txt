@@ -1,0 +1,53 @@
+This is my corrected version of the cheat posted at (fearlessrevolution.com) by AlvinC.
+
+Features:
+- God mode
+- No skill cooldown
+- Unlimited Stamina
+- Fly Hack
+- Chest ESP
+- Monster ESP
+- Instant Bow Charge
+- Elemental Sight
+- Pick Up Range
+- Auto Range Kill
+- Double Attack
+- Speedhack
+- Dumb Enemy
+- Damage Hack
+- Vertical flight
+- Auto Pick Up
+
+Tutorial:
+1 - Click on the file (Genshin cheat.bat)
+2 - Start the game
+2 - Enter the open world
+8 - Press CTRL+END to enable the cheat
+9 - Use the Hotkeys below to enable/desable the functions
+
+Hotkeys(on/off)
+6 => Vertical flight
+7 => Fly Hack
+8 => God Mode
+9 => Elemental Sight
+0 => Dumb Enemy
+
+- => Auto Range Kill (activate only when close to enemies, the function is only active for 5 second)
+
+= => Auto Pick Up (This detects and collects the items automatically)
+
+[ => Instant Bow Charge
+] => Speed hack
+\ => Double Attack
+
+The other functions are activated automatically when you press CTRL+END, you can disable them in the table.
+
+Added two new functions (Vertical Flight and Auto Pick Up).
+
+Credits:
+MGGA
+CrazyShoot
+Galpt
+AlvinC
+
+Use at your own risk, don't blame me if you get banned for misuse.

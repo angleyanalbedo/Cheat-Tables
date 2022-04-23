@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="38">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"无敌"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+cmp [rsi+1c0],1
+je exit
+mov edi,0
+originalcode:
+mov [esi+000002E0],edi
+
+exit:
+jmp returnhere
+
+"LRFF13.exe"+DC262:
+jmp newmem
+nop
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+"LRFF13.exe"+DC262:
+mov [esi+000002E0],edi
+//Alt: db 89 BE E0 02 00 00
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>"money"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>DED846B4</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <Structures StructVersion="2">
+    <Structure Name="unnamed structure" AutoFill="0" AutoCreate="1" DefaultHex="0" AutoDestroy="0" DoNotSaveLocal="0" RLECompression="1" AutoCreateStructsize="4096">
+      <Elements>
+        <Element Offset="0" Vartype="4 Bytes" Bytesize="4" RLECount="17" OffsetHex="00000000" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="68" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000044" DisplayMethod="Hexadecimal"/>
+        <Element Offset="72" Vartype="4 Bytes" Bytesize="4" RLECount="7" OffsetHex="00000048" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="100" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000064" DisplayMethod="Hexadecimal"/>
+        <Element Offset="104" Vartype="4 Bytes" Bytesize="4" RLECount="8" OffsetHex="00000068" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="136" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000088" DisplayMethod="Hexadecimal"/>
+        <Element Offset="140" Vartype="4 Bytes" Bytesize="4" RLECount="3" OffsetHex="0000008C" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="152" Vartype="Pointer" Bytesize="4" OffsetHex="00000098" Description="Pointer to instance of white::battle::BattleChara" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="156" Vartype="Pointer" Bytesize="4" OffsetHex="0000009C" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="160" Vartype="4 Bytes" Bytesize="4" RLECount="285" OffsetHex="000000A0" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="1300" Vartype="4 Bytes" Bytesize="4" OffsetHex="00000514" DisplayMethod="Hexadecimal"/>
+        <Element Offset="1304" Vartype="4 Bytes" Bytesize="4" RLECount="372" OffsetHex="00000518" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="2792" Vartype="Pointer" Bytesize="4" OffsetHex="00000AE8" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="2796" Vartype="4 Bytes" Bytesize="4" RLECount="63" OffsetHex="00000AEC" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="3048" Vartype="Pointer" Bytesize="4" OffsetHex="00000BE8" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="3052" Vartype="4 Bytes" Bytesize="4" RLECount="39" OffsetHex="00000BEC" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="3208" Vartype="Pointer" Bytesize="4" OffsetHex="00000C88" DisplayMethod="Unsigned Integer"/>
+        <Element Offset="3212" Vartype="4 Bytes" Bytesize="4" RLECount="221" OffsetHex="00000C8C" DisplayMethod="Unsigned Integer"/>
+      </Elements>
+    </Structure>
+  </Structures>
+</CheatTable>

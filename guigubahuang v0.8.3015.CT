@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"player stat"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : guigubahuang.exe
+  Version: 
+  Date   : 2021-08-07
+  Author : AlvinC
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(player,GameAssembly.dll,8B 70 60 48 85 C9 0F 84 1D) // should be unique
+alloc(newmem,$1000,player)
+
+label(code)
+label(return)
+label(stats)
+
+newmem:
+  mov [stats],rax
+
+code:
+  mov esi,[rax+60]
+  test rcx,rcx
+  jmp return
+  stats:
+  db
+
+player:
+  jmp newmem
+  nop
+return:
+registersymbol(stats)
+registersymbol(player)
+
+aobscanmodule(base,GameAssembly.dll,8B 80 90 00 00 00 48 83 C4 28 C3 E8 B3) // should be unique
+alloc(newmem2,$1000,base)
+
+label(code2)
+label(return2)
+label(pbase)
+
+newmem2:
+  mov [pbase],rax
+
+code2:
+  mov eax,[rax+00000090]
+  jmp return2
+  pbase:
+  db
+
+base:
+  jmp newmem2
+  nop
+return2:
+registersymbol(pbase)
+registersymbol(base)
+
+[DISABLE]
+
+player:
+  db 8B 70 60 48 85 C9
+
+unregistersymbol(stats)
+unregistersymbol(player)
+dealloc(newmem)
+
+base:
+  db 8B 80 90 00 00 00
+
+unregistersymbol(pbase)
+unregistersymbol(base)
+dealloc(newmem2)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>52</ID>
+          <Description>"--------- in battle ----------"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <Color>0000FF</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"hp"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>stats</Address>
+          <Offsets>
+            <Offset>60</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>"mp"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>stats</Address>
+          <Offsets>
+            <Offset>64</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"sp"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>stats</Address>
+          <Offsets>
+            <Offset>68</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"dp"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>stats</Address>
+          <Offsets>
+            <Offset>6c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>53</ID>
+          <Description>"--------- open char menu ----------"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <Color>0000FF</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"attack"</Description>
+          <LastState Value="20" RealAddress="1943FD73C60"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>90</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"defense"</Description>
+          <LastState Value="7" RealAddress="1943FD73C64"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>94</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>"footSpeed"</Description>
+          <LastState Value="500" RealAddress="1943FD73C68"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>98</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>30</ID>
+          <Description>"phycical resistance"</Description>
+          <LastState Value="0" RealAddress="1943FD73C8C"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>BC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>31</ID>
+          <Description>"magic resistance"</Description>
+          <LastState Value="0" RealAddress="1943FD73C90"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>C0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>15</ID>
+          <Description>"crit"</Description>
+          <LastState Value="30" RealAddress="1943FD73C78"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>A8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>16</ID>
+          <Description>"guard"</Description>
+          <LastState Value="15" RealAddress="1943FD73C80"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>B0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>17</ID>
+          <Description>"moveSpeed"</Description>
+          <LastState Value="350" RealAddress="1943FD73C88"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>B8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32</ID>
+          <Description>"crit damage %"</Description>
+          <LastState Value="200" RealAddress="1943FD73C7C"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>AC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>33</ID>
+          <Description>"guard damage %"</Description>
+          <LastState Value="0" RealAddress="1943FD73C84"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>B4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>22</ID>
+          <Description>"-------------------"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>19</ID>
+          <Description>"basisFist"</Description>
+          <LastState Value="4" RealAddress="1943FD73CB8"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>E8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>20</ID>
+          <Description>"basisPalm"</Description>
+          <LastState Value="1" RealAddress="1943FD73CBC"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>EC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"basisFinger"</Description>
+          <LastState Value="5" RealAddress="1943FD73CC0"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>F0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>34</ID>
+          <Description>"basisBlade"</Description>
+          <LastState Value="16" RealAddress="1943FD73CB4"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>E4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>35</ID>
+          <Description>"basisSpear"</Description>
+          <LastState Value="15" RealAddress="1943FD73CB0"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>E0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>36</ID>
+          <Description>"basisSword"</Description>
+          <LastState Value="8" RealAddress="1943FD73CAC"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>DC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"-------------------"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>47</ID>
+          <Description>"basisFire"</Description>
+          <LastState Value="19" RealAddress="1943FD73C94"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>C4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>48</ID>
+          <Description>"basisFroze"</Description>
+          <LastState Value="20" RealAddress="1943FD73C98"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>C8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>49</ID>
+          <Description>"basisThunder"</Description>
+          <LastState Value="8" RealAddress="1943FD73C9C"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>CC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>43</ID>
+          <Description>"basisWind"</Description>
+          <LastState Value="6" RealAddress="1943FD73CA0"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>D0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>44</ID>
+          <Description>"basisEarth"</Description>
+          <LastState Value="15" RealAddress="1943FD73CA4"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>D4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>45</ID>
+          <Description>"basisWood"</Description>
+          <LastState Value="8" RealAddress="1943FD73CA8"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>D8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>46</ID>
+          <Description>"-------------------"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>24</ID>
+          <Description>"refineElixir"</Description>
+          <LastState Value="1" RealAddress="1943FD73CC4"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>F4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>25</ID>
+          <Description>"refineWeapon"</Description>
+          <LastState Value="11" RealAddress="1943FD73CC8"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>F8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>26</ID>
+          <Description>"geomancy"</Description>
+          <LastState Value="3" RealAddress="1943FD73CCC"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>FC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>27</ID>
+          <Description>"symbol"</Description>
+          <LastState Value="5" RealAddress="1943FD73CD0"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>100</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>28</ID>
+          <Description>"herbal"</Description>
+          <LastState Value="2" RealAddress="1943FD73CD4"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>104</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>29</ID>
+          <Description>"mine"</Description>
+          <LastState Value="3" RealAddress="1943FD73CD8"/>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pbase</Address>
+          <Offsets>
+            <Offset>108</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>51</ID>
+      <Description>"max gems"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : guigubahuang.exe
+  Version: 
+  Date   : 2021-08-08
+  Author : AlvinC
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscan(gem,8B 40 28 48 83 C4 28 FF) // should be unique
+alloc(newmem,$1000,gem)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rax+28],(int)999999
+  add rsp,28
+  jmp return
+
+gem:
+  jmp newmem
+  nop 2
+return:
+registersymbol(gem)
+
+[DISABLE]
+
+gem:
+  db 8B 40 28 48 83 C4 28
+
+unregistersymbol(gem)
+dealloc(newmem)
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

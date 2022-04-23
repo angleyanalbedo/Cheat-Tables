@@ -1,0 +1,2201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>131</ID>
+      <Description>"Bloodybone"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Value="" Activated="1" RealAddress="00000000"/>
+      <Color>0000FF</Color>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>184</ID>
+          <Description>"Scripts"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <Color>804000</Color>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>178</ID>
+              <Description>"Player"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>008000</Color>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>146</ID>
+                  <Description>"Inf Health"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(infhealth,ShooterGame.exe,74 * F3 0F 10 44 24 74 0F)
+alloc(newmem,$1000,infhealth)
+
+label(code)
+label(return)
+label(infhealth_data)
+registersymbol(infhealth_data)
+
+newmem:
+cmp [rax+40],0
+jne short @f
+  // Player
+  movss xmm0,[infhealth_data+C] // Constant1
+  jmp return
+@@:
+// Other
+cmp [infhealth_data],1
+jne short @f
+  // One Hit Kill
+  movss xmm0,[infhealth_data+10]
+  mulss xmm0,xmm0
+  jmp return
+@@:
+cmp [infhealth_data+4],1
+jne short code
+// Damage Multiplication
+movss xmm0,[rsp+74]
+mulss xmm0,[infhealth_data+8] // Damage Multiplication Value
+jmp return
+
+code:
+  movss xmm0,[rsp+74] // positive Damage
+  jmp return
+
+align 4 CC
+
+infhealth_data:
+dd 0 // OKH
+dd 0 // Damage Multiplicator flag
+dd (float)1 // Damage Multiplicator Value
+dd 0 // Constant1
+dd (float)9999999
+
+infhealth+02:
+  jmp newmem
+  nop
+return:
+registersymbol(infhealth)
+
+[DISABLE]
+
+infhealth+02:
+  db F3 0F 10 44 24 74
+
+unregistersymbol(infhealth)
+unregistersymbol(infhealth_data)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.AprimalCharacter::TakeDamage+5B9D
+
+"ShooterGame.exe"+46747C: 48 89 84 24 50 0D 00 00              -  mov [rsp+00000D50],rax
+"ShooterGame.exe"+467484: 48 8B 84 24 50 0D 00 00              -  mov rax,[rsp+00000D50]
+"ShooterGame.exe"+46748C: 8B 80 98 00 00 00                    -  mov eax,[rax+00000098]
+"ShooterGame.exe"+467492: D1 E8                                -  shr eax,1
+"ShooterGame.exe"+467494: 83 E0 01                             -  and eax,01
+"ShooterGame.exe"+467497: 85 C0                                -  test eax,eax
+"ShooterGame.exe"+467499: 75 78                                -  jne ShooterGame.exe+467513
+"ShooterGame.exe"+46749B: 48 8B 84 24 10 16 00 00              -  mov rax,[rsp+00001610]
+"ShooterGame.exe"+4674A3: 48 83 B8 D0 0C 00 00 00              -  cmp qword ptr [rax+00000CD0],00
+"ShooterGame.exe"+4674AB: 74 66                                -  je ShooterGame.exe+467513
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+4674AD: F3 0F 10 44 24 74                    -  movss xmm0,[rsp+74]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+4674B3: 0F 57 05 86 08 ED 03                 -  xorps xmm0,[ShooterGame.exe+4337D40]
+"ShooterGame.exe"+4674BA: 48 8B 84 24 10 16 00 00              -  mov rax,[rsp+00001610]
+"ShooterGame.exe"+4674C2: 48 8B 80 D0 0C 00 00                 -  mov rax,[rax+00000CD0]
+"ShooterGame.exe"+4674C9: 48 8B 8C 24 10 16 00 00              -  mov rcx,[rsp+00001610]
+"ShooterGame.exe"+4674D1: 48 8B 89 D0 0C 00 00                 -  mov rcx,[rcx+00000CD0]
+"ShooterGame.exe"+4674D8: 48 8B 00                             -  mov rax,[rax]
+"ShooterGame.exe"+4674DB: C6 44 24 48 00                       -  mov byte ptr [rsp+48],00
+"ShooterGame.exe"+4674E0: C6 44 24 40 01                       -  mov byte ptr [rsp+40],01
+"ShooterGame.exe"+4674E5: 48 8B 94 24 20 16 00 00              -  mov rdx,[rsp+00001620]
+"ShooterGame.exe"+4674ED: 48 8B 52 18                          -  mov rdx,[rdx+18]
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>219</ID>
+                      <Description>"One Hit Kill"</Description>
+                      <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:DISABLED
+1:ENABLED
+</DropDownList>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>infhealth_data</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>220</ID>
+                      <Description>"Damage Multiplication"</Description>
+                      <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:DISABLED
+1:ENABLED
+</DropDownList>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>infhealth_data+4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>221</ID>
+                      <Description>"Value to Multiply by"</Description>
+                      <VariableType>Float</VariableType>
+                      <Address>infhealth_data+8</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>241</ID>
+                  <Description>"Inf Stats"</Description>
+                  <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(infstats,ShooterGame.exe,24 F3 0F 10 84 8A 18 08 00 00)
+alloc(newmem,$1000,ShooterGame.APrimalCharacter::GetCurrentStatusValue+2F)
+
+label(code)
+label(return)
+label(infstats_data)
+registersymbol(infstats_data)
+
+newmem:
+mov rax,[rdx+20]
+test rax,rax
+jz short @f
+mov rax,[rax+40]
+test rax,rax
+jnz short code
+@@:
+cmp [infstats_data],1 // Inf Energy
+jne short @f
+  movss xmm0,[rdx+DC] // Max Energy
+  movss [rdx+81C],xmm0 // Current Energy
+@@:
+cmp [infstats_data+4],1 // Inf Oxygen
+jne short @f
+  movss xmm0,[rdx+E4] // Max Oxygen
+  movss [rdx+824],xmm0 // Current Oxygen
+@@:
+cmp [infstats_data+8],1 // Inf Food
+jne short @f
+  movss xmm0,[rdx+E8] // Max Food
+  movss [rdx+828],xmm0 // Current Food
+@@:
+cmp [infstats_data+C],1 // Inf Water
+jne short code
+  movss xmm0,[rdx+EC] // Max Water
+  movss [rdx+82C],xmm0 // Current Water
+
+code:
+  mov rax,rcx
+  movss xmm0,[rdx+rcx*4+00000818]
+  jmp return
+
+align 4 CC
+
+infstats_data:
+dd 0,0,0,0
+
+infstats+01:
+  jmp newmem
+  nop 4
+return:
+registersymbol(infstats)
+
+[DISABLE]
+
+infstats+01:
+  db F3 0F 10 84 8A 18 08 00 00
+
+unregistersymbol(infstats_data)
+unregistersymbol(infstats)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalCharacter::GetCurrentStatusValue+2F
+
+"ShooterGame.exe"+4A73B0: 89 54 24 10                    -  mov [rsp+10],edx
+"ShooterGame.exe"+4A73B4: 48 89 4C 24 08                 -  mov [rsp+08],rcx
+"ShooterGame.exe"+4A73B9: 48 83 EC 18                    -  sub rsp,18
+"ShooterGame.exe"+4A73BD: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+4A73C2: 48 8B 80 D0 0C 00 00           -  mov rax,[rax+00000CD0]
+"ShooterGame.exe"+4A73C9: 48 89 04 24                    -  mov [rsp],rax
+"ShooterGame.exe"+4A73CD: 48 63 44 24 28                 -  movsxd  rax,dword ptr [rsp+28]
+"ShooterGame.exe"+4A73D2: 48 63 4C 24 28                 -  movsxd  rcx,dword ptr [rsp+28]
+"ShooterGame.exe"+4A73D7: 48 8B 14 24                    -  mov rdx,[rsp]
+"ShooterGame.exe"+4A73DB: 4C 8B 04 24                    -  mov r8,[rsp]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+4A73DF: F3 0F 10 84 8A 18 08 00 00     -  movss xmm0,[rdx+rcx*4+00000818]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+4A73E8: F3 41 0F 58 84 80 48 08 00 00  -  addss xmm0,[r8+rax*4+00000848]
+"ShooterGame.exe"+4A73F2: 48 83 C4 18                    -  add rsp,18
+"ShooterGame.exe"+4A73F6: C3                             -  ret
+"ShooterGame.exe"+4A73F7: CC                             -  int 3
+"ShooterGame.exe"+4A73F8: CC                             -  int 3
+"ShooterGame.exe"+4A73F9: CC                             -  int 3
+"ShooterGame.exe"+4A73FA: CC                             -  int 3
+"ShooterGame.exe"+4A73FB: CC                             -  int 3
+"ShooterGame.exe"+4A73FC: CC                             -  int 3
+"ShooterGame.exe"+4A73FD: CC                             -  int 3
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>133</ID>
+                      <Description>"Inf Energy"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+infstats_data:
+dd 1
+[DISABLE]
+infstats_data:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>138</ID>
+                      <Description>"Inf Oxygen"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+infstats_data+4:
+dd 1
+[DISABLE]
+infstats_data+4:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>135</ID>
+                      <Description>"Inf Food"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+infstats_data+8:
+dd 1
+[DISABLE]
+infstats_data+8:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>139</ID>
+                      <Description>"Inf Water"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+infstats_data+C:
+dd 1
+[DISABLE]
+infstats_data+C:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>140</ID>
+                  <Description>"No increasing Torpidity"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(noinctorpidity,ShooterGame.exe,FF 90 E8 03 00 00 0F B6 44 24 54)
+alloc(newmem,$1000,noinctorpidity)
+
+label(code)
+label(return)
+
+newmem:
+cmp edx,2
+je return
+
+code:
+  call qword ptr [rax+000003E8]
+  jmp return
+
+noinctorpidity:
+  jmp newmem
+  nop
+return:
+registersymbol(noinctorpidity)
+
+[DISABLE]
+
+noinctorpidity:
+  db FF 90 E8 03 00 00
+
+unregistersymbol(noinctorpidity)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalCharacterStatusComponent::ApplyStatusValueModifiers+13A9
+
+"ShooterGame.exe"+513491: 48 89 54 24 38                    -  mov [rsp+38],rdx
+"ShooterGame.exe"+513496: C6 44 24 30 00                    -  mov byte ptr [rsp+30],00
+"ShooterGame.exe"+51349B: C6 44 24 28 01                    -  mov byte ptr [rsp+28],01
+"ShooterGame.exe"+5134A0: C6 44 24 20 00                    -  mov byte ptr [rsp+20],00
+"ShooterGame.exe"+5134A5: 45 33 C9                          -  xor r9d,r9d
+"ShooterGame.exe"+5134A8: F3 0F 10 54 24 60                 -  movss xmm2,[rsp+60]
+"ShooterGame.exe"+5134AE: 48 8B 94 24 68 04 00 00           -  mov rdx,[rsp+00000468]
+"ShooterGame.exe"+5134B6: 8B 14 02                          -  mov edx,[rdx+rax]
+"ShooterGame.exe"+5134B9: 48 8B 8C 24 50 05 00 00           -  mov rcx,[rsp+00000550]
+"ShooterGame.exe"+5134C1: 48 8B 84 24 20 05 00 00           -  mov rax,[rsp+00000520]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+5134C9: FF 90 E8 03 00 00                 -  call qword ptr [rax+000003E8]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+5134CF: 0F B6 44 24 54                    -  movzx eax,byte ptr [rsp+54]
+"ShooterGame.exe"+5134D4: 85 C0                             -  test eax,eax
+"ShooterGame.exe"+5134D6: 0F 85 F9 01 00 00                 -  jne ShooterGame.exe+5136D5
+"ShooterGame.exe"+5134DC: 48 8B 84 24 50 05 00 00           -  mov rax,[rsp+00000550]
+"ShooterGame.exe"+5134E4: 48 05 F8 07 00 00                 -  add rax,000007F8
+"ShooterGame.exe"+5134EA: 48 89 84 24 E8 02 00 00           -  mov [rsp+000002E8],rax
+"ShooterGame.exe"+5134F2: 33 C0                             -  xor eax,eax
+"ShooterGame.exe"+5134F4: 83 F8 01                          -  cmp eax,01
+"ShooterGame.exe"+5134F7: 0F 84 95 00 00 00                 -  je ShooterGame.exe+513592
+"ShooterGame.exe"+5134FD: 83 7C 24 50 00                    -  cmp dword ptr [rsp+50],00
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>2</ID>
+                  <Description>"Stats"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(stats_aob,ShooterGame.exe,24 F3 0F 10 84 8A 18 08 00 00 F3 41 0F 5E)
+alloc(newmem,$1000,stats_aob)
+
+label(code)
+label(return)
+label(sbase)
+registersymbol(sbase)
+
+newmem:
+mov [sbase],rdx
+
+code:
+  movss xmm0,[rdx+rcx*4+00000818]
+  jmp return
+
+sbase:
+dq 0
+
+stats_aob+01:
+  jmp newmem
+  nop 4
+return:
+registersymbol(stats_aob)
+
+[DISABLE]
+
+stats_aob+01:
+  db F3 0F 10 84 8A 18 08 00 00
+
+unregistersymbol(findstats)
+unregistersymbol(stats_aob)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.AprimalCharacter::GetPercentStatusValue+2F
+
+"ShooterGame.exe"+4A7440: 89 54 24 10                    -  mov [rsp+10],edx
+"ShooterGame.exe"+4A7444: 48 89 4C 24 08                 -  mov [rsp+08],rcx
+"ShooterGame.exe"+4A7449: 48 83 EC 18                    -  sub rsp,18
+"ShooterGame.exe"+4A744D: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+4A7452: 48 8B 80 D0 0C 00 00           -  mov rax,[rax+00000CD0]
+"ShooterGame.exe"+4A7459: 48 89 04 24                    -  mov [rsp],rax
+"ShooterGame.exe"+4A745D: 48 63 44 24 28                 -  movsxd  rax,dword ptr [rsp+28]
+"ShooterGame.exe"+4A7462: 48 63 4C 24 28                 -  movsxd  rcx,dword ptr [rsp+28]
+"ShooterGame.exe"+4A7467: 48 8B 14 24                    -  mov rdx,[rsp]
+"ShooterGame.exe"+4A746B: 4C 8B 04 24                    -  mov r8,[rsp]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+4A746F: F3 0F 10 84 8A 18 08 00 00     -  movss xmm0,[rdx+rcx*4+00000818]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+4A7478: F3 41 0F 5E 84 80 D8 00 00 00  -  divss xmm0,[r8+rax*4+000000D8]
+"ShooterGame.exe"+4A7482: 48 83 C4 18                    -  add rsp,18
+"ShooterGame.exe"+4A7486: C3                             -  ret
+"ShooterGame.exe"+4A7487: CC                             -  int 3
+"ShooterGame.exe"+4A7488: CC                             -  int 3
+"ShooterGame.exe"+4A7489: CC                             -  int 3
+"ShooterGame.exe"+4A748A: CC                             -  int 3
+"ShooterGame.exe"+4A748B: CC                             -  int 3
+"ShooterGame.exe"+4A748C: CC                             -  int 3
+"ShooterGame.exe"+4A748D: CC                             -  int 3
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>17</ID>
+                      <Description>"Current"</Description>
+                      <Options moHideChildren="1"/>
+                      <LastState Value="" RealAddress="00000000"/>
+                      <GroupHeader>1</GroupHeader>
+                      <CheatEntries>
+                        <CheatEntry>
+                          <ID>8</ID>
+                          <Description>"Current Health"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+818</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>10</ID>
+                          <Description>"Current Energy"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+81C</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>137</ID>
+                          <Description>"Current Oxygen"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+824</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>5</ID>
+                          <Description>"Current Food"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+828</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>3</ID>
+                          <Description>"Current Water"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+82C</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>59</ID>
+                          <Description>"Current Weight"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+834</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>36</ID>
+                          <Description>"Current Melee Damage%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+F8</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>38</ID>
+                          <Description>"Current Speed%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+FC</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>40</ID>
+                          <Description>"Current Crafting Speed%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+104</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>145</ID>
+                          <Description>"Current Torpidity"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+820</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>43</ID>
+                          <Description>"Current Resistance"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+100</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>12</ID>
+                          <Description>"Current XP"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+6D4</Address>
+                        </CheatEntry>
+                      </CheatEntries>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>18</ID>
+                      <Description>"Max"</Description>
+                      <Options moHideChildren="1"/>
+                      <LastState Value="" RealAddress="00000000"/>
+                      <GroupHeader>1</GroupHeader>
+                      <CheatEntries>
+                        <CheatEntry>
+                          <ID>16</ID>
+                          <Description>"Max Health"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+D8</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>20</ID>
+                          <Description>"Max Energy"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+DC</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>27</ID>
+                          <Description>"Max Oxygen"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+E4</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>30</ID>
+                          <Description>"Max Food"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+E8</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>32</ID>
+                          <Description>"Max Water"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+EC</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>34</ID>
+                          <Description>"Max Wheigt"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+F4</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>29</ID>
+                          <Description>"Max Torpidity"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sbase]+E0</Address>
+                        </CheatEntry>
+                      </CheatEntries>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>141</ID>
+                  <Description>"Ultimate Resistance"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(ultimateresistance,ShooterGame.exe,F3 42 0F 5E 84 02 D8 00 00 00)
+alloc(newmem,$1000,ultimateresistance)
+
+label(code)
+label(return)
+label(resistance_data)
+registersymbol(resistance_data)
+
+newmem:
+push rbx
+movq rbx,xmm0
+cmp [resistance_data],1
+je short save
+cmp [resistance_data],2
+je short load
+cmp [resistance_data],3
+je short ultimate
+jmp short code
+
+save:
+mov [resistance_data],0
+movss xmm0,[rdx+100]
+movss [resistance_data+4],xmm0
+jmp short code
+
+load:
+mov [resistance_data],0
+movss xmm0,[resistance_data+4]
+movss [rdx+100],xmm0
+jmp short code
+
+ultimate:
+mov [resistance_data],0
+mov [rdx+100],(float)+inf
+
+code:
+  movq xmm0,rbx
+  pop rbx
+  divss xmm0,[rdx+r8+000000D8]
+  jmp return
+
+align 4 CC
+
+resistance_data:
+dd 0
+dq 0
+
+ultimateresistance:
+  jmp newmem
+  nop 5
+return:
+registersymbol(ultimateresistance)
+
+[DISABLE]
+
+ultimateresistance:
+  db F3 42 0F 5E 84 02 D8 00 00 00
+
+unregistersymbol(resistance_data)
+unregistersymbol(ultimateresistance)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalCharacter::GetHealthPercentage+66
+
+"ShooterGame.exe"+49FEE0: 74 46                          -  je ShooterGame.exe+49FF28
+"ShooterGame.exe"+49FEE2: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+49FEE7: 48 8B 80 10 06 00 00           -  mov rax,[rax+00000610]
+"ShooterGame.exe"+49FEEE: B9 04 00 00 00                 -  mov ecx,00000004
+"ShooterGame.exe"+49FEF3: 48 6B C9 00                    -  imul rcx,rcx,00
+"ShooterGame.exe"+49FEF7: 48 8B 54 24 20                 -  mov rdx,[rsp+20]
+"ShooterGame.exe"+49FEFC: 48 8B 92 10 06 00 00           -  mov rdx,[rdx+00000610]
+"ShooterGame.exe"+49FF03: 41 B8 04 00 00 00              -  mov r8d,00000004
+"ShooterGame.exe"+49FF09: 4D 6B C0 00                    -  imul r8,r8,00
+"ShooterGame.exe"+49FF0D: F3 0F 10 84 08 18 08 00 00     -  movss xmm0,[rax+rcx+00000818]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+49FF16: F3 42 0F 5E 84 02 D8 00 00 00  -  divss xmm0,[rdx+r8+000000D8]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+49FF20: F3 0F 11 44 24 04              -  movss [rsp+04],xmm0
+"ShooterGame.exe"+49FF26: EB 20                          -  jmp ShooterGame.exe+49FF48
+"ShooterGame.exe"+49FF28: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+49FF2D: 48 8B 4C 24 20                 -  mov rcx,[rsp+20]
+"ShooterGame.exe"+49FF32: F3 0F 10 80 64 02 00 00        -  movss xmm0,[rax+00000264]
+"ShooterGame.exe"+49FF3A: F3 0F 5E 81 68 02 00 00        -  divss xmm0,[rcx+00000268]
+"ShooterGame.exe"+49FF42: F3 0F 11 44 24 04              -  movss [rsp+04],xmm0
+"ShooterGame.exe"+49FF48: F3 0F 10 44 24 04              -  movss xmm0,[rsp+04]
+"ShooterGame.exe"+49FF4E: 48 83 C4 18                    -  add rsp,18
+"ShooterGame.exe"+49FF52: C3                             -  ret
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>208</ID>
+                      <Description>"Resistance Flag"</Description>
+                      <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:Do Nothing
+1:Save Current Resistance
+2:Load Saved Resistance
+3:Set Resistance to Ultimate
+</DropDownList>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>resistance_data</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>209</ID>
+                      <Description>"Saved Resistance"</Description>
+                      <VariableType>Float</VariableType>
+                      <Address>resistance_data+4</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>46</ID>
+                  <Description>"Get Item Base (Right Click Item to Edit)"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(itembase,ShooterGame.exe,8B 89 E0 05 00 00 89 88)
+alloc(newmem,$1000,itembase)
+
+label(code)
+label(return)
+label(ibase)
+registersymbol(ibase)
+
+newmem:
+mov [ibase],rcx
+
+code:
+  mov ecx,[rcx+000005E0]
+  jmp return
+
+align 4 CC
+
+ibase:
+dq 0
+
+itembase:
+  jmp newmem
+  nop
+return:
+registersymbol(itembase)
+
+[DISABLE]
+
+itembase:
+  db 8B 89 E0 05 00 00
+
+unregistersymbol(itembase)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UContextMenu_PrimalItem::InitializeMe+8A
+
+"ShooterGame.exe"+171DBF: 74 67                          -  je ShooterGame.exe+171E28
+"ShooterGame.exe"+171DC1: 48 8B 4C 24 20                 -  mov rcx,[rsp+20]
+"ShooterGame.exe"+171DC6: E8 85 B5 02 00                 -  call ShooterGame.exe+19D350
+"ShooterGame.exe"+171DCB: 48 8B C8                       -  mov rcx,rax
+"ShooterGame.exe"+171DCE: E8 8D 89 00 00                 -  call ShooterGame.exe+17A760
+"ShooterGame.exe"+171DD3: 48 89 44 24 28                 -  mov [rsp+28],rax
+"ShooterGame.exe"+171DD8: 48 83 7C 24 28 00              -  cmp qword ptr [rsp+28],00
+"ShooterGame.exe"+171DDE: 74 39                          -  je ShooterGame.exe+171E19
+"ShooterGame.exe"+171DE0: 48 8B 44 24 50                 -  mov rax,[rsp+50]
+"ShooterGame.exe"+171DE5: 48 8B 4C 24 28                 -  mov rcx,[rsp+28]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+171DEA: 8B 89 E0 05 00 00              -  mov ecx,[rcx+000005E0]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+171DF0: 89 88 A4 02 00 00              -  mov [rax+000002A4],ecx
+"ShooterGame.exe"+171DF6: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+171DFB: 48 8B 90 C8 05 00 00           -  mov rdx,[rax+000005C8]
+"ShooterGame.exe"+171E02: 48 8B 4C 24 30                 -  mov rcx,[rsp+30]
+"ShooterGame.exe"+171E07: E8 C4 A7 0D 01                 -  call ShooterGame.exe+124C5D0
+"ShooterGame.exe"+171E0C: 48 8B 4C 24 50                 -  mov rcx,[rsp+50]
+"ShooterGame.exe"+171E11: 89 81 AC 02 00 00              -  mov [rcx+000002AC],eax
+"ShooterGame.exe"+171E17: EB 0F                          -  jmp ShooterGame.exe+171E28
+"ShooterGame.exe"+171E19: 48 8B 44 24 50                 -  mov rax,[rsp+50]
+"ShooterGame.exe"+171E1E: C7 80 A4 02 00 00 01 00 00 00  -  mov [rax+000002A4],00000001
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>47</ID>
+                      <Description>"Current Stack"</Description>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>[ibase]+5E0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>48</ID>
+                      <Description>"Max Stack"</Description>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>[ibase]+5E4</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>52</ID>
+                  <Description>"Get Engrams Pointer"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(engrampoints,ShooterGame.exe,8B 80 5C 0C 00 00 89)
+alloc(newmem,$1000,engrampoints)
+
+label(code)
+label(return)
+label(engrambase)
+registersymbol(engrambase)
+
+newmem:
+mov [engrambase],rax
+
+code:
+  mov eax,[rax+00000C5C]
+  jmp return
+
+align 4 CC
+
+engrambase:
+dq 0
+
+engrampoints:
+  jmp newmem
+  nop
+return:
+registersymbol(engrampoints)
+
+[DISABLE]
+
+engrampoints:
+  db 8B 80 5C 0C 00 00
+
+unregistersymbol(engrampoints)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UUI_Hub::Tick_Implementation+1F1
+
+"ShooterGame.exe"+1213A9C: 74 14                       -  je ShooterGame.exe+1213AB2
+"ShooterGame.exe"+1213A9E: 48 8B 84 24 80 01 00 00     -  mov rax,[rsp+00000180]
+"ShooterGame.exe"+1213AA6: 48 8B 88 80 06 00 00        -  mov rcx,[rax+00000680]
+"ShooterGame.exe"+1213AAD: E8 4E A3 16 01              -  call ShooterGame.exe+237DE00
+"ShooterGame.exe"+1213AB2: 48 8B 8C 24 80 01 00 00     -  mov rcx,[rsp+00000180]
+"ShooterGame.exe"+1213ABA: E8 71 D2 89 FF              -  call ShooterGame.exe+AB0D30
+"ShooterGame.exe"+1213ABF: 48 85 C0                    -  test rax,rax
+"ShooterGame.exe"+1213AC2: 74 19                       -  je ShooterGame.exe+1213ADD
+"ShooterGame.exe"+1213AC4: 48 8B 8C 24 80 01 00 00     -  mov rcx,[rsp+00000180]
+"ShooterGame.exe"+1213ACC: E8 5F D2 89 FF              -  call ShooterGame.exe+AB0D30
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+1213AD1: 8B 80 5C 0C 00 00           -  mov eax,[rax+00000C5C]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+1213AD7: 89 44 24 28                 -  mov [rsp+28],eax
+"ShooterGame.exe"+1213ADB: EB 08                       -  jmp ShooterGame.exe+1213AE5
+"ShooterGame.exe"+1213ADD: C7 44 24 28 00 00 00 00     -  mov [rsp+28],00000000
+"ShooterGame.exe"+1213AE5: 8B 44 24 28                 -  mov eax,[rsp+28]
+"ShooterGame.exe"+1213AE9: 89 44 24 20                 -  mov [rsp+20],eax
+"ShooterGame.exe"+1213AED: 48 8B 84 24 80 01 00 00     -  mov rax,[rsp+00000180]
+"ShooterGame.exe"+1213AF5: 48 83 B8 40 06 00 00 00     -  cmp qword ptr [rax+00000640],00
+"ShooterGame.exe"+1213AFD: 0F 84 B2 00 00 00           -  je ShooterGame.exe+1213BB5
+"ShooterGame.exe"+1213B03: 33 D2                       -  xor edx,edx
+"ShooterGame.exe"+1213B05: 48 8D 0D 8C E2 8D 02        -  lea rcx,[ShooterGame.exe+3AF1D98]
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>53</ID>
+                      <Description>"Current Engrams Pointer"</Description>
+                      <ShowAsSigned>1</ShowAsSigned>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>[engrambase]+C5C</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>55</ID>
+                  <Description>"No Decreasing Items"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(nodecitems,ShooterGame.exe,89 88 E0 05 00 00 48 8B 84 24 90)
+alloc(newmem,$1000,nodecitems)
+
+label(code)
+label(return)
+
+newmem:
+cmp [rax+5E0],ecx
+jg return
+
+code:
+  mov [rax+000005E0],ecx
+  jmp return
+
+nodecitems:
+  jmp newmem
+  nop
+return:
+registersymbol(nodecitems)
+
+[DISABLE]
+
+nodecitems:
+  db 89 88 E0 05 00 00
+
+unregistersymbol(nodecitems)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalItem::SetQuantity+38F9
+
+"ShooterGame.exe"+83FA26: E8 25 8D 8D FF                       -  call ShooterGame.exe+118750
+"ShooterGame.exe"+83FA2B: 48 8D 8C 24 E8 08 00 00              -  lea rcx,[rsp+000008E8]
+"ShooterGame.exe"+83FA33: E8 18 8D 8D FF                       -  call ShooterGame.exe+118750
+"ShooterGame.exe"+83FA38: 48 8D 8C 24 08 09 00 00              -  lea rcx,[rsp+00000908]
+"ShooterGame.exe"+83FA40: E8 0B 8D 8D FF                       -  call ShooterGame.exe+118750
+"ShooterGame.exe"+83FA45: 48 8B 84 24 90 09 00 00              -  mov rax,[rsp+00000990]
+"ShooterGame.exe"+83FA4D: 8B 80 E0 05 00 00                    -  mov eax,[rax+000005E0]
+"ShooterGame.exe"+83FA53: 89 84 24 58 08 00 00                 -  mov [rsp+00000858],eax
+"ShooterGame.exe"+83FA5A: 48 8B 84 24 90 09 00 00              -  mov rax,[rsp+00000990]
+"ShooterGame.exe"+83FA62: 8B 8C 24 98 09 00 00                 -  mov ecx,[rsp+00000998]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+83FA69: 89 88 E0 05 00 00                    -  mov [rax+000005E0],ecx
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+83FA6F: 48 8B 84 24 90 09 00 00              -  mov rax,[rsp+00000990]
+"ShooterGame.exe"+83FA77: 48 05 80 02 00 00                    -  add rax,00000280
+"ShooterGame.exe"+83FA7D: 33 D2                                -  xor edx,edx
+"ShooterGame.exe"+83FA7F: 48 8B C8                             -  mov rcx,rax
+"ShooterGame.exe"+83FA82: E8 99 19 8E FF                       -  call ShooterGame.exe+121420
+"ShooterGame.exe"+83FA87: 0F B6 C0                             -  movzx eax,al
+"ShooterGame.exe"+83FA8A: 85 C0                                -  test eax,eax
+"ShooterGame.exe"+83FA8C: 0F 84 2B 07 00 00                    -  je ShooterGame.exe+8401BD
+"ShooterGame.exe"+83FA92: 48 8B 84 24 90 09 00 00              -  mov rax,[rsp+00000990]
+"ShooterGame.exe"+83FA9A: 48 05 80 02 00 00                    -  add rax,00000280
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>211</ID>
+                  <Description>"No Decreasing Engram Points"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(nodecengrampoints,ShooterGame.exe,2B C8 8B C1 48 8B 8C 24 00 02 00 00 89)
+registersymbol(nodecengrampoints)
+
+nodecengrampoints:
+  db 90 90
+
+[DISABLE]
+
+nodecengrampoints:
+  db 2B C8
+unregistersymbol(nodecengrampoints)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.AShooterPlayerState::ServerUnlockEngram+592
+
+"ShooterGame.exe"+F7FBD6: E8 15 7E E5 00           -  call ShooterGame.exe+1DD79F0
+"ShooterGame.exe"+F7FBDB: 48 8B 84 24 C0 00 00 00  -  mov rax,[rsp+000000C0]
+"ShooterGame.exe"+F7FBE3: 48 8B 00                 -  mov rax,[rax]
+"ShooterGame.exe"+F7FBE6: 48 89 84 24 88 01 00 00  -  mov [rsp+00000188],rax
+"ShooterGame.exe"+F7FBEE: 48 63 44 24 30           -  movsxd  rax,dword ptr [rsp+30]
+"ShooterGame.exe"+F7FBF3: 48 8B 8C 24 88 01 00 00  -  mov rcx,[rsp+00000188]
+"ShooterGame.exe"+F7FBFB: 48 8B 0C C1              -  mov rcx,[rcx+rax*8]
+"ShooterGame.exe"+F7FBFF: E8 6C B0 79 FF           -  call ShooterGame.exe+71AC70
+"ShooterGame.exe"+F7FC04: 48 8B 8C 24 00 02 00 00  -  mov rcx,[rsp+00000200]
+"ShooterGame.exe"+F7FC0C: 8B 89 5C 0C 00 00        -  mov ecx,[rcx+00000C5C]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+F7FC12: 2B C8                    -  sub ecx,eax
+"ShooterGame.exe"+F7FC14: 8B C1                    -  mov eax,ecx
+"ShooterGame.exe"+F7FC16: 48 8B 8C 24 00 02 00 00  -  mov rcx,[rsp+00000200]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+F7FC1E: 89 81 5C 0C 00 00        -  mov [rcx+00000C5C],eax
+"ShooterGame.exe"+F7FC24: 48 8B 05 FD B4 58 03     -  mov rax,[ShooterGame.exe+450B128]
+"ShooterGame.exe"+F7FC2B: 48 8B 80 D0 01 00 00     -  mov rax,[rax+000001D0]
+"ShooterGame.exe"+F7FC32: 48 83 78 30 00           -  cmp qword ptr [rax+30],00
+"ShooterGame.exe"+F7FC37: 74 1C                    -  je ShooterGame.exe+F7FC55
+"ShooterGame.exe"+F7FC39: 48 8B 05 E8 B4 58 03     -  mov rax,[ShooterGame.exe+450B128]
+"ShooterGame.exe"+F7FC40: 48 8B 80 D0 01 00 00     -  mov rax,[rax+000001D0]
+"ShooterGame.exe"+F7FC47: 48 8B 40 30              -  mov rax,[rax+30]
+"ShooterGame.exe"+F7FC4B: 48 89 84 24 00 01 00 00  -  mov [rsp+00000100],rax
+"ShooterGame.exe"+F7FC53: EB 1A                    -  jmp ShooterGame.exe+F7FC6F
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>210</ID>
+                  <Description>"No Requierd Engram Points"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(noreqengrampoints,ShooterGame.exe,54 48 81 C4 A8 00 00 00)
+alloc(newmem,$1000,ShooterGame.UPrimalEngramEntry::GetRequiredEngramPoints+2BD)
+
+label(code)
+label(return)
+
+newmem:
+xor eax,eax
+
+code:
+  add rsp,000000A8
+  ret
+
+noreqengrampoints+01:
+  jmp newmem
+  nop 2
+return:
+registersymbol(noreqengrampoints)
+
+[DISABLE]
+
+noreqengrampoints+01:
+  db 48 81 C4 A8 00 00 00
+
+unregistersymbol(noreqengrampoints)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalEngramEntry::GetRequiredEngramPoints+2BD
+
+"ShooterGame.exe"+71AEF9: 48 89 84 24 90 00 00 00  -  mov [rsp+00000090],rax
+"ShooterGame.exe"+71AF01: 48 63 44 24 30           -  movsxd  rax,dword ptr [rsp+30]
+"ShooterGame.exe"+71AF06: 48 6B C0 28              -  imul rax,rax,28
+"ShooterGame.exe"+71AF0A: 48 8B 8C 24 90 00 00 00  -  mov rcx,[rsp+00000090]
+"ShooterGame.exe"+71AF12: 8B 44 01 18              -  mov eax,[rcx+rax+18]
+"ShooterGame.exe"+71AF16: EB 15                    -  jmp ShooterGame.exe+71AF2D
+"ShooterGame.exe"+71AF18: E9 4C FE FF FF           -  jmp ShooterGame.exe+71AD69
+"ShooterGame.exe"+71AF1D: E9 C3 FD FF FF           -  jmp ShooterGame.exe+71ACE5
+"ShooterGame.exe"+71AF22: 48 8B 84 24 B0 00 00 00  -  mov rax,[rsp+000000B0]
+"ShooterGame.exe"+71AF2A: 8B 40 54                 -  mov eax,[rax+54]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+71AF2D: 48 81 C4 A8 00 00 00     -  add rsp,000000A8
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+71AF34: C3                       -  ret
+"ShooterGame.exe"+71AF35: CC                       -  int 3
+"ShooterGame.exe"+71AF36: CC                       -  int 3
+"ShooterGame.exe"+71AF37: CC                       -  int 3
+"ShooterGame.exe"+71AF38: CC                       -  int 3
+"ShooterGame.exe"+71AF39: CC                       -  int 3
+"ShooterGame.exe"+71AF3A: CC                       -  int 3
+"ShooterGame.exe"+71AF3B: CC                       -  int 3
+"ShooterGame.exe"+71AF3C: CC                       -  int 3
+"ShooterGame.exe"+71AF3D: CC                       -  int 3
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>50</ID>
+                  <Description>"Max Out all Items in Inventory or set own value"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(maxitems,ShooterGame.exe,8B 80 E0 05 00 00 C3)
+alloc(newmem,$1000,maxitems)
+
+label(code)
+label(return)
+label(itemcounttoset)
+registersymbol(itemcounttoset)
+
+newmem:
+cmp [itemcounttoset],0
+cmovne edx,[itemcounttoset]
+cmove edx,[rax+000005E4] // Max Items
+mov [rax+000005E0],edx
+
+code:
+  mov eax,[rax+000005E0]
+  jmp return
+
+align 4 CC
+
+itemcounttoset:
+dd 0
+
+maxitems:
+  jmp newmem
+  nop
+return:
+registersymbol(maxitems)
+
+[DISABLE]
+
+maxitems:
+  db 8B 80 E0 05 00 00
+
+unregistersymbol(maxitems)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalItem::GetItemQuantity+A
+
+"ShooterGame.exe"+80C988: CC                       -  int 3
+"ShooterGame.exe"+80C989: CC                       -  int 3
+"ShooterGame.exe"+80C98A: CC                       -  int 3
+"ShooterGame.exe"+80C98B: CC                       -  int 3
+"ShooterGame.exe"+80C98C: CC                       -  int 3
+"ShooterGame.exe"+80C98D: CC                       -  int 3
+"ShooterGame.exe"+80C98E: CC                       -  int 3
+"ShooterGame.exe"+80C98F: CC                       -  int 3
+"ShooterGame.exe"+80C990: 48 89 4C 24 08           -  mov [rsp+08],rcx
+"ShooterGame.exe"+80C995: 48 8B 44 24 08           -  mov rax,[rsp+08]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+80C99A: 8B 80 E0 05 00 00        -  mov eax,[rax+000005E0]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+80C9A0: C3                       -  ret
+"ShooterGame.exe"+80C9A1: CC                       -  int 3
+"ShooterGame.exe"+80C9A2: CC                       -  int 3
+"ShooterGame.exe"+80C9A3: CC                       -  int 3
+"ShooterGame.exe"+80C9A4: CC                       -  int 3
+"ShooterGame.exe"+80C9A5: CC                       -  int 3
+"ShooterGame.exe"+80C9A6: CC                       -  int 3
+"ShooterGame.exe"+80C9A7: CC                       -  int 3
+"ShooterGame.exe"+80C9A8: CC                       -  int 3
+"ShooterGame.exe"+80C9A9: CC                       -  int 3
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>213</ID>
+                      <Description>"Own Value"</Description>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>itemcounttoset</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>13</ID>
+                  <Description>"Infinite Level Ups (Dinos Also)"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(inflvlups,ShooterGame.exe,48 89 4C 24 08 48 83 EC 38 48 8B 44 24 40 8B 80 C4)
+registersymbol(inflvlups)
+
+inflvlups:
+  db B0 01 C3 // mov al,01 ret
+
+[DISABLE]
+inflvlups:
+  db 48 89 4C
+
+unregistersymbol(inflvlups)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalCharacterStatusComponent::HasExperienceForLevelUp
+
+"ShooterGame.exe"+5452CF: 0F B6 44 24 24           -  movzx eax,byte ptr [rsp+24]
+"ShooterGame.exe"+5452D4: 48 83 C4 58              -  add rsp,58
+"ShooterGame.exe"+5452D8: C3                       -  ret
+"ShooterGame.exe"+5452D9: CC                       -  int 3
+"ShooterGame.exe"+5452DA: CC                       -  int 3
+"ShooterGame.exe"+5452DB: CC                       -  int 3
+"ShooterGame.exe"+5452DC: CC                       -  int 3
+"ShooterGame.exe"+5452DD: CC                       -  int 3
+"ShooterGame.exe"+5452DE: CC                       -  int 3
+"ShooterGame.exe"+5452DF: CC                       -  int 3
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+5452E0: 48 89 4C 24 08           -  mov [rsp+08],rcx
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+5452E5: 48 83 EC 38              -  sub rsp,38
+"ShooterGame.exe"+5452E9: 48 8B 44 24 40           -  mov rax,[rsp+40]
+"ShooterGame.exe"+5452EE: 8B 80 C4 06 00 00        -  mov eax,[rax+000006C4]
+"ShooterGame.exe"+5452F4: C1 E8 0C                 -  shr eax,0C
+"ShooterGame.exe"+5452F7: 83 E0 01                 -  and eax,01
+"ShooterGame.exe"+5452FA: 85 C0                    -  test eax,eax
+"ShooterGame.exe"+5452FC: 74 33                    -  je ShooterGame.exe+545331
+"ShooterGame.exe"+5452FE: 48 8B 4C 24 40           -  mov rcx,[rsp+40]
+"ShooterGame.exe"+545303: E8 78 FE FF FF           -  call ShooterGame.exe+545180
+"ShooterGame.exe"+545308: 0F B6 C0                 -  movzx eax,al
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>57</ID>
+                  <Description>"Inf Durability"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(infdurability,ShooterGame.exe,CC 01 00 00 F3 0F 11 80 6C 05 00 00)
+alloc(newmem,$1000,infdurability)
+
+label(code)
+label(return)
+label(const)
+
+newmem:
+comiss xmm0,[rax+56C]
+jnb short code
+movss xmm0,[rax+56C]
+addss xmm0,[const]
+
+code:
+  movss [rax+0000056C],xmm0
+  jmp return
+
+align 10 CC
+
+const:
+dd (float)0.1
+
+infdurability+04:
+  jmp newmem
+  nop 3
+return:
+registersymbol(infdurability)
+
+[DISABLE]
+
+infdurability+04:
+  db F3 0F 11 80 6C 05 00 00
+
+unregistersymbol(infdurability)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.UPrimalItem::AddItemDurability+9AA
+
+"ShooterGame.exe"+7BCCD0: F3 0F 10 84 24 58 02 00 00  -  movss xmm0,[rsp+00000258]
+"ShooterGame.exe"+7BCCD9: 0F 2F 84 24 10 02 00 00     -  comiss xmm0,[rsp+00000210]
+"ShooterGame.exe"+7BCCE1: 72 14                       -  jb ShooterGame.exe+7BCCF7
+"ShooterGame.exe"+7BCCE3: F3 0F 10 84 24 58 02 00 00  -  movss xmm0,[rsp+00000258]
+"ShooterGame.exe"+7BCCEC: F3 0F 11 84 24 CC 01 00 00  -  movss [rsp+000001CC],xmm0
+"ShooterGame.exe"+7BCCF5: EB 12                       -  jmp ShooterGame.exe+7BCD09
+"ShooterGame.exe"+7BCCF7: F3 0F 10 84 24 10 02 00 00  -  movss xmm0,[rsp+00000210]
+"ShooterGame.exe"+7BCD00: F3 0F 11 84 24 CC 01 00 00  -  movss [rsp+000001CC],xmm0
+"ShooterGame.exe"+7BCD09: 48 8B 84 24 D0 05 00 00     -  mov rax,[rsp+000005D0]
+"ShooterGame.exe"+7BCD11: F3 0F 10 84 24 CC 01 00 00  -  movss xmm0,[rsp+000001CC]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+7BCD1A: F3 0F 11 80 6C 05 00 00     -  movss [rax+0000056C],xmm0
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+7BCD22: 48 8B 84 24 D0 05 00 00     -  mov rax,[rsp+000005D0]
+"ShooterGame.exe"+7BCD2A: 48 8B 8C 24 D0 05 00 00     -  mov rcx,[rsp+000005D0]
+"ShooterGame.exe"+7BCD32: F3 0F 10 80 38 07 00 00     -  movss xmm0,[rax+00000738]
+"ShooterGame.exe"+7BCD3A: 0F 2F 81 6C 05 00 00        -  comiss xmm0,[rcx+0000056C]
+"ShooterGame.exe"+7BCD41: 76 62                       -  jna ShooterGame.exe+7BCDA5
+"ShooterGame.exe"+7BCD43: B8 02 00 00 00              -  mov eax,00000002
+"ShooterGame.exe"+7BCD48: 48 6B C0 00                 -  imul rax,rax,00
+"ShooterGame.exe"+7BCD4C: 48 8B 8C 24 D0 05 00 00     -  mov rcx,[rsp+000005D0]
+"ShooterGame.exe"+7BCD54: 0F BF 84 01 A8 05 00 00     -  movsx eax,word ptr [rcx+rax+000005A8]
+"ShooterGame.exe"+7BCD5C: 85 C0                       -  test eax,eax
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>181</ID>
+                  <Description>"Inf Ammo in Clip"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>define(address,ShooterGame.AShooterWeapon::HasInfiniteAmmo)
+define(bytes,48 89 5C)
+
+[ENABLE]
+address:
+  db B0 01 C3 // mov al,01 ret
+
+[DISABLE]
+
+address:
+  db bytes
+
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>119</ID>
+                  <Description>"Get Coords"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(getcoords,ShooterGame.exe,0F 28 89 F0 00 00 00 0F 28 C1 0F 29 8D 10 01)
+alloc(newmem,$1000,getcoords)
+
+label(code)
+label(return)
+label(coordsbase)
+registersymbol(coordsbase)
+
+newmem:
+mov [coordsbase],rcx
+
+code:
+  movaps xmm1,[rcx+000000F0]
+  jmp return
+
+align 4 CC
+
+coordsbase:
+dq 0
+
+getcoords:
+  jmp newmem
+  nop 2
+return:
+registersymbol(getcoords)
+
+[DISABLE]
+
+getcoords:
+  db 0F 28 89 F0 00 00 00
+
+unregistersymbol(getcoords)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.AWorldSettings::DuringPhysxTick+DA9
+
+"ShooterGame.exe"+28AD98F: 0F 84 2D 03 00 00        -  je ShooterGame.exe+28ADCC2
+"ShooterGame.exe"+28AD995: 48 8B 8B 50 02 00 00     -  mov rcx,[rbx+00000250]
+"ShooterGame.exe"+28AD99C: 48 85 C9                 -  test rcx,rcx
+"ShooterGame.exe"+28AD99F: 74 63                    -  je ShooterGame.exe+28ADA04
+"ShooterGame.exe"+28AD9A1: F6 81 10 01 00 00 01     -  test byte ptr [rcx+00000110],01
+"ShooterGame.exe"+28AD9A8: 74 0F                    -  je ShooterGame.exe+28AD9B9
+"ShooterGame.exe"+28AD9AA: 48 8B 01                 -  mov rax,[rcx]
+"ShooterGame.exe"+28AD9AD: 48 8D 55 BC              -  lea rdx,[rbp-44]
+"ShooterGame.exe"+28AD9B1: FF 90 78 04 00 00        -  call qword ptr [rax+00000478]
+"ShooterGame.exe"+28AD9B7: EB 2C                    -  jmp ShooterGame.exe+28AD9E5
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+28AD9B9: 0F 28 89 F0 00 00 00     -  movaps xmm1,[rcx+000000F0]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+28AD9C0: 0F 28 C1                 -  movaps xmm0,xmm1
+"ShooterGame.exe"+28AD9C3: 0F 29 8D 10 01 00 00     -  movaps [rbp+00000110],xmm1
+"ShooterGame.exe"+28AD9CA: F3 0F 11 4D BC           -  movss [rbp-44],xmm1
+"ShooterGame.exe"+28AD9CF: 0F C6 C1 55              -  shufps xmm0,xmm1,55
+"ShooterGame.exe"+28AD9D3: F3 0F 10 89 F8 00 00 00  -  movss xmm1,[rcx+000000F8]
+"ShooterGame.exe"+28AD9DB: F3 0F 11 4D C4           -  movss [rbp-3C],xmm1
+"ShooterGame.exe"+28AD9E0: F3 0F 11 45 C0           -  movss [rbp-40],xmm0
+"ShooterGame.exe"+28AD9E5: 8B 45 C4                 -  mov eax,[rbp-3C]
+"ShooterGame.exe"+28AD9E8: F2 0F 10 45 BC           -  movsd xmm0,[rbp-44]
+"ShooterGame.exe"+28AD9ED: 89 85 A0 00 00 00        -  mov [rbp+000000A0],eax
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>120</ID>
+                      <Description>"X-Pos"</Description>
+                      <VariableType>Float</VariableType>
+                      <Address>[coordsbase]+F0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>122</ID>
+                      <Description>"Y-Pos"</Description>
+                      <VariableType>Float</VariableType>
+                      <Address>[coordsbase]+F4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>121</ID>
+                      <Description>"Z-Pos"</Description>
+                      <VariableType>Float</VariableType>
+                      <Address>[coordsbase]+F8</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>234</ID>
+                  <Description>"Teleport Activation"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(teleport_aob,ShooterGame.exe,0F 10 80 F0 00 00 00 0F 11 84 24 10 15)
+alloc(newmem,$1000,teleport_aob)
+
+label(code)
+label(return)
+label(teleport_data)
+registersymbol(teleport_data)
+
+newmem:
+cmp [teleport_data],1
+jne short @f
+  // Save
+  movups xmm0,[rax+F0]
+  movups [teleport_data+8],xmm0
+  jmp short code
+@@:
+cmp [teleport_data+4],1
+jne short code
+  // Load
+  movsd xmm0,[teleport_data+8]
+  movsd [rax+F0],xmm0
+  movss xmm0,[teleport_data+10]
+  movss [rax+F8],xmm0
+
+code:
+  mov [teleport_data],0
+  mov [teleport_data+4],0
+  movups xmm0,[rax+000000F0]
+  jmp return
+
+align 4 CC
+
+teleport_data:
+dd 0,0,0,0,0,0
+
+teleport_aob:
+  jmp newmem
+  nop 2
+return:
+registersymbol(teleport_aob)
+
+[DISABLE]
+
+teleport_aob:
+  db 0F 10 80 F0 00 00 00
+
+unregistersymbol(teleport_aob)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.AShooterPlayerController::TickActor+1F9A
+
+"ShooterGame.exe"+EAFD37: 48 8B 84 24 28 02 00 00     -  mov rax,[rsp+00000228]
+"ShooterGame.exe"+EAFD3F: 48 8B 00                    -  mov rax,[rax]
+"ShooterGame.exe"+EAFD42: 48 8D 94 24 F8 09 00 00     -  lea rdx,[rsp+000009F8]
+"ShooterGame.exe"+EAFD4A: 48 8B 8C 24 28 02 00 00     -  mov rcx,[rsp+00000228]
+"ShooterGame.exe"+EAFD52: FF 90 78 04 00 00           -  call qword ptr [rax+00000478]
+"ShooterGame.exe"+EAFD58: 48 8D 84 24 F8 09 00 00     -  lea rax,[rsp+000009F8]
+"ShooterGame.exe"+EAFD60: 48 89 84 24 08 09 00 00     -  mov [rsp+00000908],rax
+"ShooterGame.exe"+EAFD68: E9 D1 00 00 00              -  jmp ShooterGame.exe+EAFE3E
+"ShooterGame.exe"+EAFD6D: E9 CC 00 00 00              -  jmp ShooterGame.exe+EAFE3E
+"ShooterGame.exe"+EAFD72: 48 8B 84 24 28 02 00 00     -  mov rax,[rsp+00000228]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+EAFD7A: 0F 10 80 F0 00 00 00        -  movups xmm0,[rax+000000F0]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+EAFD81: 0F 11 84 24 10 15 00 00     -  movups [rsp+00001510],xmm0
+"ShooterGame.exe"+EAFD89: 48 8D 84 24 F8 0D 00 00     -  lea rax,[rsp+00000DF8]
+"ShooterGame.exe"+EAFD91: 48 89 84 24 68 04 00 00     -  mov [rsp+00000468],rax
+"ShooterGame.exe"+EAFD99: B8 04 00 00 00              -  mov eax,00000004
+"ShooterGame.exe"+EAFD9E: 48 6B C0 00                 -  imul rax,rax,00
+"ShooterGame.exe"+EAFDA2: B9 04 00 00 00              -  mov ecx,00000004
+"ShooterGame.exe"+EAFDA7: 48 6B C9 00                 -  imul rcx,rcx,00
+"ShooterGame.exe"+EAFDAB: 48 8B 94 24 68 04 00 00     -  mov rdx,[rsp+00000468]
+"ShooterGame.exe"+EAFDB3: F3 0F 10 84 04 10 15 00 00  -  movss xmm0,[rsp+rax+00001510]
+"ShooterGame.exe"+EAFDBC: F3 0F 11 04 0A              -  movss [rdx+rcx],xmm0
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>235</ID>
+                      <Description>"Save Location"</Description>
+                      <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:No
+1:Yes
+</DropDownList>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>teleport_data</Address>
+                      <Hotkeys>
+                        <Hotkey>
+                          <Action>Set Value</Action>
+                          <Keys>
+                            <Key>97</Key>
+                          </Keys>
+                          <Value>1</Value>
+                          <ID>0</ID>
+                        </Hotkey>
+                      </Hotkeys>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>236</ID>
+                      <Description>"Load Location"</Description>
+                      <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">0:No
+1:Yes
+</DropDownList>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>teleport_data+4</Address>
+                      <Hotkeys>
+                        <Hotkey>
+                          <Action>Set Value</Action>
+                          <Keys>
+                            <Key>98</Key>
+                          </Keys>
+                          <Value>1</Value>
+                          <ID>0</ID>
+                        </Hotkey>
+                      </Hotkeys>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>238</ID>
+                      <Description>"Saved Position"</Description>
+                      <Options moHideChildren="1"/>
+                      <LastState Value="" RealAddress="00000000"/>
+                      <GroupHeader>1</GroupHeader>
+                      <CheatEntries>
+                        <CheatEntry>
+                          <ID>237</ID>
+                          <Description>"Saved X"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>teleport_data+8</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>239</ID>
+                          <Description>"Saved Y"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>teleport_data+C</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>240</ID>
+                          <Description>"Saved Z"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>teleport_data+10</Address>
+                        </CheatEntry>
+                      </CheatEntries>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>179</ID>
+              <Description>"Dinos"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>008000</Color>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>176</ID>
+                  <Description>"Inf Health Tamed Dinos"</Description>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(infdinohealth,ShooterGame.exe,00 FF 90 20 15 00 00)
+alloc(newmem,$1000,infdinohealth)
+
+label(code)
+label(return)
+
+newmem:
+mov rax,[rcx+CE0]
+test rax,rax
+jz short code
+mov eax,1
+jmp return
+
+code:
+  call qword ptr [rax+00001520]
+  jmp return
+
+infdinohealth+01:
+  jmp newmem
+  nop
+return:
+registersymbol(infdinohealth)
+
+[DISABLE]
+
+infdinohealth+01:
+  db FF 90 20 15 00 00
+
+unregistersymbol(infdinohealth)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalDinoCharacter::TakeDamage+15BE
+
+"ShooterGame.exe"+5D810E: C1 E8 0B                          -  shr eax,0B
+"ShooterGame.exe"+5D8111: 83 E0 01                          -  and eax,01
+"ShooterGame.exe"+5D8114: 85 C0                             -  test eax,eax
+"ShooterGame.exe"+5D8116: 75 3B                             -  jne ShooterGame.exe+5D8153
+"ShooterGame.exe"+5D8118: 48 83 BC 24 B0 02 00 00 00        -  cmp qword ptr [rsp+000002B0],00
+"ShooterGame.exe"+5D8121: 74 30                             -  je ShooterGame.exe+5D8153
+"ShooterGame.exe"+5D8123: 48 8B 84 24 90 02 00 00           -  mov rax,[rsp+00000290]
+"ShooterGame.exe"+5D812B: 48 8B 00                          -  mov rax,[rax]
+"ShooterGame.exe"+5D812E: 48 8B 94 24 B0 02 00 00           -  mov rdx,[rsp+000002B0]
+"ShooterGame.exe"+5D8136: 48 8B 8C 24 90 02 00 00           -  mov rcx,[rsp+00000290]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+5D813E: FF 90 20 15 00 00                 -  call qword ptr [rax+00001520]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+5D8144: 0F B6 C0                          -  movzx eax,al
+"ShooterGame.exe"+5D8147: 85 C0                             -  test eax,eax
+"ShooterGame.exe"+5D8149: 74 08                             -  je ShooterGame.exe+5D8153
+"ShooterGame.exe"+5D814B: 0F 57 C0                          -  xorps xmm0,xmm0
+"ShooterGame.exe"+5D814E: E9 98 02 00 00                    -  jmp ShooterGame.exe+5D83EB
+"ShooterGame.exe"+5D8153: E9 A8 7E 9F FF                    -  jmp 7FF6848E0000
+"ShooterGame.exe"+5D8158: 0F 1F 00                          -  nop dword ptr [rax]
+"ShooterGame.exe"+5D815B: 0F B6 80 84 08 00 00              -  movzx eax,byte ptr [rax+00000884]
+"ShooterGame.exe"+5D8162: 24 01                             -  and al,01
+"ShooterGame.exe"+5D8164: 88 44 24 3C                       -  mov [rsp+3C],al
+}
+</AssemblerScript>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>177</ID>
+                  <Description>"Inf Stats Tamed Dinos"</Description>
+                  <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(infdinostats,ShooterGame.exe,F3 41 0F 58 84 80 48 08 00 00 48 83)
+alloc(newmem,$1000,infdinostats)
+
+label(code)
+label(return)
+label(dinostats_data)
+registersymbol(dinostats_data)
+
+newmem:
+mov rax,[rdx+20]
+test rax,rax
+jz short code
+mov rax,[rax+40]
+test rax,rax
+jz short code
+cmp [dinostats_data],1 // Inf Oxygen
+jne short @f
+  movss xmm0,[rdx+E4] // Max Oxygen
+  movss [rdx+824],xmm0 // Current Oxygen
+@@:
+cmp [dinostats_data+4],1 // Inf Food
+jne short code
+  movss xmm0,[rdx+E8] // Max Food
+  movss [rdx+828],xmm0 // Current Food
+code:
+  mov rax,rcx
+  movss xmm0,[rdx+rcx*4+818]
+  addss xmm0,[r8+rax*4+00000848]
+  jmp return
+
+align 4 CC
+
+dinostats_data:
+dd 0,0
+
+infdinostats:
+  jmp newmem
+  nop 5
+return:
+registersymbol(infdinostats)
+
+[DISABLE]
+
+infdinostats:
+  db F3 41 0F 58 84 80 48 08 00 00
+
+unregistersymbol(dinostats_data)
+unregistersymbol(infdinostats)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalCharacter::GetCurrentStatusValue+38
+
+"ShooterGame.exe"+4A73B4: 48 89 4C 24 08                 -  mov [rsp+08],rcx
+"ShooterGame.exe"+4A73B9: 48 83 EC 18                    -  sub rsp,18
+"ShooterGame.exe"+4A73BD: 48 8B 44 24 20                 -  mov rax,[rsp+20]
+"ShooterGame.exe"+4A73C2: 48 8B 80 D0 0C 00 00           -  mov rax,[rax+00000CD0]
+"ShooterGame.exe"+4A73C9: 48 89 04 24                    -  mov [rsp],rax
+"ShooterGame.exe"+4A73CD: 48 63 44 24 28                 -  movsxd  rax,dword ptr [rsp+28]
+"ShooterGame.exe"+4A73D2: 48 63 4C 24 28                 -  movsxd  rcx,dword ptr [rsp+28]
+"ShooterGame.exe"+4A73D7: 48 8B 14 24                    -  mov rdx,[rsp]
+"ShooterGame.exe"+4A73DB: 4C 8B 04 24                    -  mov r8,[rsp]
+"ShooterGame.exe"+4A73DF: F3 0F 10 84 8A 18 08 00 00     -  movss xmm0,[rdx+rcx*4+00000818]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+4A73E8: F3 41 0F 58 84 80 48 08 00 00  -  addss xmm0,[r8+rax*4+00000848]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+4A73F2: 48 83 C4 18                    -  add rsp,18
+"ShooterGame.exe"+4A73F6: C3                             -  ret
+"ShooterGame.exe"+4A73F7: CC                             -  int 3
+"ShooterGame.exe"+4A73F8: CC                             -  int 3
+"ShooterGame.exe"+4A73F9: CC                             -  int 3
+"ShooterGame.exe"+4A73FA: CC                             -  int 3
+"ShooterGame.exe"+4A73FB: CC                             -  int 3
+"ShooterGame.exe"+4A73FC: CC                             -  int 3
+"ShooterGame.exe"+4A73FD: CC                             -  int 3
+"ShooterGame.exe"+4A73FE: CC                             -  int 3
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>245</ID>
+                      <Description>"Inf Oxygen"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+dinostats_data:
+dd 1
+
+[DISABLE]
+dinostats_data:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>246</ID>
+                      <Description>"Inf Food"</Description>
+                      <LastState/>
+                      <Color>800000</Color>
+                      <VariableType>Auto Assembler Script</VariableType>
+                      <AssemblerScript>[ENABLE]
+dinostats_data+4:
+dd 1
+
+[DISABLE]
+dinostats_data+4:
+dd 0
+</AssemblerScript>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>153</ID>
+                  <Description>"Dino Stats (Hit Dino to Edit / Own Dinos only)"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState/>
+                  <Color>FF0000</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(getdinostats,ShooterGame.exe,48 8B 84 24 90 02 00 00 0F B6 80 84 08 00 00 24 01 88)
+alloc(newmem,$1000,getdinostats)
+
+label(code)
+label(return)
+label(sdinobase)
+registersymbol(sdinobase)
+
+newmem:
+mov rax,[rsp+00000290]
+push rbx
+mov rbx,[rax+CE0]
+test rbx,rbx
+jz short code
+mov rbx,[rax+CD0]
+mov [sdinobase],rbx
+
+code:
+  pop rbx
+  // mov rax,[rsp+00000290]
+  jmp return
+
+align 4 CC
+
+sdinobase:
+dq 0
+
+getdinostats:
+  jmp newmem
+  nop 3
+return:
+registersymbol(getdinostats)
+
+[DISABLE]
+
+getdinostats:
+  db 48 8B 84 24 90 02 00 00
+
+unregistersymbol(getdinostats)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalDinoCharacter::TakeDamage+15D3
+
+"ShooterGame.exe"+5D8123: 48 8B 84 24 90 02 00 00           -  mov rax,[rsp+00000290]
+"ShooterGame.exe"+5D812B: 48 8B 00                          -  mov rax,[rax]
+"ShooterGame.exe"+5D812E: 48 8B 94 24 B0 02 00 00           -  mov rdx,[rsp+000002B0]
+"ShooterGame.exe"+5D8136: 48 8B 8C 24 90 02 00 00           -  mov rcx,[rsp+00000290]
+"ShooterGame.exe"+5D813E: FF 90 20 15 00 00                 -  call qword ptr [rax+00001520]
+"ShooterGame.exe"+5D8144: 0F B6 C0                          -  movzx eax,al
+"ShooterGame.exe"+5D8147: 85 C0                             -  test eax,eax
+"ShooterGame.exe"+5D8149: 74 08                             -  je ShooterGame.exe+5D8153
+"ShooterGame.exe"+5D814B: 0F 57 C0                          -  xorps xmm0,xmm0
+"ShooterGame.exe"+5D814E: E9 98 02 00 00                    -  jmp ShooterGame.exe+5D83EB
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+5D8153: 48 8B 84 24 90 02 00 00           -  mov rax,[rsp+00000290]
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+5D815B: 0F B6 80 84 08 00 00              -  movzx eax,byte ptr [rax+00000884]
+"ShooterGame.exe"+5D8162: 24 01                             -  and al,01
+"ShooterGame.exe"+5D8164: 88 44 24 3C                       -  mov [rsp+3C],al
+"ShooterGame.exe"+5D8168: 48 8B 84 24 B0 02 00 00           -  mov rax,[rsp+000002B0]
+"ShooterGame.exe"+5D8170: 48 89 44 24 20                    -  mov [rsp+20],rax
+"ShooterGame.exe"+5D8175: 4C 8B 8C 24 A8 02 00 00           -  mov r9,[rsp+000002A8]
+"ShooterGame.exe"+5D817D: 4C 8B 84 24 A0 02 00 00           -  mov r8,[rsp+000002A0]
+"ShooterGame.exe"+5D8185: F3 0F 10 8C 24 98 02 00 00        -  movss xmm1,[rsp+00000298]
+"ShooterGame.exe"+5D818E: 48 8B 8C 24 90 02 00 00           -  mov rcx,[rsp+00000290]
+"ShooterGame.exe"+5D8196: E8 75 97 E8 FF                    -  call ShooterGame.exe+461910
+}
+</AssemblerScript>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>154</ID>
+                      <Description>"Current"</Description>
+                      <Options moHideChildren="1"/>
+                      <LastState Value="" RealAddress="00000000"/>
+                      <GroupHeader>1</GroupHeader>
+                      <CheatEntries>
+                        <CheatEntry>
+                          <ID>155</ID>
+                          <Description>"Current Health"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+818</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>156</ID>
+                          <Description>"Current Energy"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+81C</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>157</ID>
+                          <Description>"Current Oxygen"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+824</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>158</ID>
+                          <Description>"Current Food"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+828</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>159</ID>
+                          <Description>"Current Water"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+82C</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>160</ID>
+                          <Description>"Current Weight"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+834</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>161</ID>
+                          <Description>"Current Melee Damage%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+F8</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>162</ID>
+                          <Description>"Current Speed%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+FC</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>163</ID>
+                          <Description>"Current Crafting Speed%"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+104</Address>
+                          <CheatEntries>
+                            <CheatEntry>
+                              <ID>167</ID>
+                              <Description>"Max"</Description>
+                              <Options moHideChildren="1"/>
+                              <LastState Value="" RealAddress="00000000"/>
+                              <GroupHeader>1</GroupHeader>
+                              <CheatEntries>
+                                <CheatEntry>
+                                  <ID>168</ID>
+                                  <Description>"Max Health"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+D8</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>169</ID>
+                                  <Description>"Max Energy"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+DC</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>170</ID>
+                                  <Description>"Max Oxygen"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+E4</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>171</ID>
+                                  <Description>"Max Food"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+E8</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>172</ID>
+                                  <Description>"Max Water"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+EC</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>173</ID>
+                                  <Description>"Max Weight"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+F4</Address>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>175</ID>
+                                  <Description>"Max Torpidity"</Description>
+                                  <VariableType>Float</VariableType>
+                                  <Address>[sdinobase]+E0</Address>
+                                </CheatEntry>
+                              </CheatEntries>
+                            </CheatEntry>
+                          </CheatEntries>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>164</ID>
+                          <Description>"Current Torpidity"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+820</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>165</ID>
+                          <Description>"Current Resistance"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+100</Address>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>166</ID>
+                          <Description>"Current XP"</Description>
+                          <VariableType>Float</VariableType>
+                          <Address>[sdinobase]+6D4</Address>
+                        </CheatEntry>
+                      </CheatEntries>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>151</ID>
+                  <Description>"Instant taim Dino (Dino has to eat one time)"</Description>
+                  <LastState/>
+                  <Color>FF00FF</Color>
+                  <VariableType>Auto Assembler Script</VariableType>
+                  <AssemblerScript>[ENABLE]
+aobscanmodule(instanttamedino,ShooterGame.exe,0F 87 * * * * 48 8B 84 24 F0 01)
+alloc(dinojumpbkp,$1000,instanttamedino)
+registersymbol(instanttamedino)
+registersymbol(dinojumpbkp)
+
+dinojumpbkp:
+  readmem(instanttamedino,6)
+
+instanttamedino:
+  db 90 90 90 90 90 90
+
+[DISABLE]
+
+instanttamedino:
+  readmem(dinojumpbkp,6)
+
+dealloc(dinojumpbkp)
+unregistersymbol(dinojumpbkp)
+unregistersymbol(instanttamedino)
+
+{
+// ORIGINAL CODE - INJECTION POINT: ShooterGame.APrimalDinoCharacter::ServerSleepingTick+51C
+
+"ShooterGame.exe"+60BC46: 48 8B 84 24 F0 01 00 00     -  mov rax,[rsp+000001F0]
+"ShooterGame.exe"+60BC4E: F3 0F 10 88 EC 16 00 00     -  movss xmm1,[rax+000016EC]
+"ShooterGame.exe"+60BC56: F3 0F 58 C8                 -  addss xmm1,xmm0
+"ShooterGame.exe"+60BC5A: 0F 28 C1                    -  movaps xmm0,xmm1
+"ShooterGame.exe"+60BC5D: 48 8B 84 24 F0 01 00 00     -  mov rax,[rsp+000001F0]
+"ShooterGame.exe"+60BC65: F3 0F 11 80 EC 16 00 00     -  movss [rax+000016EC],xmm0
+"ShooterGame.exe"+60BC6D: 48 8B 84 24 F0 01 00 00     -  mov rax,[rsp+000001F0]
+"ShooterGame.exe"+60BC75: 48 8B 8C 24 F0 01 00 00     -  mov rcx,[rsp+000001F0]
+"ShooterGame.exe"+60BC7D: F3 0F 10 80 D4 16 00 00     -  movss xmm0,[rax+000016D4]
+"ShooterGame.exe"+60BC85: 0F 2F 81 E8 16 00 00        -  comiss xmm0,[rcx+000016E8]
+// ---------- INJECTING HERE ----------
+"ShooterGame.exe"+60BC8C: 0F 87 EE 00 00 00           -  ja ShooterGame.exe+60BD80
+// ---------- DONE INJECTING  ----------
+"ShooterGame.exe"+60BC92: 48 8B 84 24 F0 01 00 00     -  mov rax,[rsp+000001F0]
+"ShooterGame.exe"+60BC9A: 48 8B 00                    -  mov rax,[rax]
+"ShooterGame.exe"+60BC9D: 48 8B 8C 24 F0 01 00 00     -  mov rcx,[rsp+000001F0]
+"ShooterGame.exe"+60BCA5: FF 90 00 01 00 00           -  call qword ptr [rax+00000100]
+"ShooterGame.exe"+60BCAB: 48 89 84 24 20 01 00 00     -  mov [rsp+00000120],rax
+"ShooterGame.exe"+60BCB3: 48 8B 84 24 20 01 00 00     -  mov rax,[rsp+00000120]
+"ShooterGame.exe"+60BCBB: 48 8B 88 E8 01 00 00        -  mov rcx,[rax+000001E8]
+"ShooterGame.exe"+60BCC2: E8 C9 19 B2 FF              -  call ShooterGame.exe+12D690
+"ShooterGame.exe"+60BCC7: 48 89 84 24 30 01 00 00     -  mov [rsp+00000130],rax
+"ShooterGame.exe"+60BCCF: 48 8B 84 24 F0 01 00 00     -  mov rax,[rsp+000001F0]
+}
+</AssemblerScript>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>224</ID>
+          <Description>"Player Controller and such"</Description>
+          <Options moHideChildren="1"/>
+          <LastState/>
+          <Color>808000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{
+Notes:
+MovementComponent +D8 P-&gt; Base Address of the Objects Position
+}
+
+define(address,ShooterGame.APlayerController::PlayerTick)
+define(bytes,48 89 5C 24 18)
+
+[ENABLE]
+assert(address,bytes)
+alloc(newmem,$100,ShooterGame.APlayerController::PlayerTick)
+
+label(code)
+label(return)
+label(shootergame.playercontroller_data)
+registersymbol(shootergame.playercontroller_data)
+
+newmem:
+mov [shootergame.playercontroller_data],rcx // APlayerController
+
+// Save Registers defined as volatile
+push rax
+push rcx
+push rdx
+push r8
+push r9
+push r10
+push r11
+
+sub rsp,28 // Shadow Space and Stack alignement
+call ShooterGame.AShooterPlayerController::GetPlayerCharacter // Get PlayerCharacter
+add rsp,28
+
+mov [shootergame.playercontroller_data+8],rax
+
+test rax,rax
+je short @f
+  mov rcx,rax
+  sub rsp,28 // Shadow Space and Stack alignement
+  call ShooterGame.ACharacter::GetMovementComponent // Get MovementComponent of PlayerCharacter
+  add rsp,28
+  mov [shootergame.playercontroller_data+10],rax
+@@:
+
+// Restore Registers
+pop r11
+pop r10
+pop r9
+pop r8
+pop rdx
+pop rcx
+pop rax
+
+code:
+  // Original Code
+  mov [rsp+18],rbx
+  jmp return
+
+shootergame.playercontroller_data:
+dq 0,0,0
+
+address:
+  jmp newmem
+return:
+
+[DISABLE]
+
+address:
+  db bytes
+
+dealloc(newmem)
+unregistersymbol(shootergame.playercontroller_data)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>225</ID>
+              <Description>"APlayerController "</Description>
+              <ShowAsHex>1</ShowAsHex>
+              <Color>800080</Color>
+              <VariableType>8 Bytes</VariableType>
+              <Address>shootergame.playercontroller_data</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>226</ID>
+              <Description>"PlayerCharacter"</Description>
+              <ShowAsHex>1</ShowAsHex>
+              <Color>800080</Color>
+              <VariableType>8 Bytes</VariableType>
+              <Address>shootergame.playercontroller_data+8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>227</ID>
+              <Description>"MovementComponent"</Description>
+              <ShowAsHex>1</ShowAsHex>
+              <Color>800080</Color>
+              <VariableType>8 Bytes</VariableType>
+              <Address>shootergame.playercontroller_data+10</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>228</ID>
+              <Description>"Player Position"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <Color>008000</Color>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>233</ID>
+                  <Description>"Pointed to by MovementComponent [+D8]"</Description>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <Color>0000FF</Color>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>229</ID>
+                  <Description>"Base Address"</Description>
+                  <ShowAsHex>1</ShowAsHex>
+                  <Color>800080</Color>
+                  <VariableType>8 Bytes</VariableType>
+                  <Address>[shootergame.playercontroller_data+10]+D8</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>230</ID>
+                  <Description>"X-Pos"</Description>
+                  <Color>000080</Color>
+                  <VariableType>Float</VariableType>
+                  <Address>shootergame.playercontroller_data+10</Address>
+                  <Offsets>
+                    <Offset>F0</Offset>
+                    <Offset>D8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>231</ID>
+                  <Description>"Y-Pos"</Description>
+                  <Color>000080</Color>
+                  <VariableType>Float</VariableType>
+                  <Address>shootergame.playercontroller_data+10</Address>
+                  <Offsets>
+                    <Offset>F4</Offset>
+                    <Offset>D8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>232</ID>
+                  <Description>"Z-Pos"</Description>
+                  <Color>000080</Color>
+                  <VariableType>Float</VariableType>
+                  <Address>shootergame.playercontroller_data+10</Address>
+                  <Offsets>
+                    <Offset>F8</Offset>
+                    <Offset>D8</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="80000008">
+      <Description>Change of jb ShooterGame.APrimalDinoCharacter::ServerSleepingTick+610</Description>
+      <AddressString>ShooterGame.exe+60BB55</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>2F</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>5C</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>82</Byte>
+        <Byte>25</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>C0</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="80000008">
+      <Description>Change of ja ShooterGame.APrimalDinoCharacter::ServerSleepingTick+610</Description>
+      <AddressString>ShooterGame.exe+60BC8C</AddressString>
+      <Before>
+        <Byte>81</Byte>
+        <Byte>E8</Byte>
+        <Byte>16</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>87</Byte>
+        <Byte>EE</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>84</Byte>
+        <Byte>24</Byte>
+        <Byte>F0</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <Comments>By Bloodybone
+</Comments>
+  <DisassemblerComments>
+    <DisassemblerComment>
+      <Address>"ShooterGame.exe"+6A64E3</Address>
+      <Comment>rcx = String
+</Comment>
+    </DisassemblerComment>
+  </DisassemblerComments>
+</CheatTable>
